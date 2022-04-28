@@ -8,4 +8,4 @@ updated version of: https://github.com/alphauc/sdk with some improvements, eg. u
 3. des1gner
 
 # media
-![image](https://i.imgur.com/7rKZHUL.png)
+![image](https://too.lewd.se/48e0d2dcd056_csgo_EPyd3kEPim.png)
