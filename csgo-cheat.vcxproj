@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{AF041675-F00D-4A72-B40F-78D0C4BB72D9}</ProjectGuid>
+    <RootNamespace>csgo-cheat</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>csgo-cheat</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\C++ Library\freetype-windows-binaries-2.12.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\C++ Library\freetype-windows-binaries-2.12.0\release dll\win32;$(LibraryPath)</LibraryPath>
+    <OutDir>.\output\debug\</OutDir>
+    <IntDir>.\intermediates\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\output\debug\</OutDir>
+    <IntDir>.\intermediates\</IntDir>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;debug_build;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>MinSpace</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="core\features\misc\engine_prediction.cpp" />
+    <ClCompile Include="core\features\misc\misc.cpp" />
+    <ClCompile Include="core\features\visuals\visuals.cpp" />
+    <ClCompile Include="core\hooks\hooks.cpp" />
+    <ClCompile Include="core\menu\config\config.cpp" />
+    <ClCompile Include="core\menu\framework.cpp" />
+    <ClCompile Include="core\menu\menu.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="dependencies\minhook\buffer.c" />
+    <ClCompile Include="dependencies\minhook\hde\hde32.c" />
+    <ClCompile Include="dependencies\minhook\hde\hde64.c" />
+    <ClCompile Include="dependencies\minhook\hook.c" />
+    <ClCompile Include="dependencies\minhook\trampoline.c" />
+    <ClCompile Include="dependencies\interfaces\interfaces.cpp" />
+    <ClCompile Include="dependencies\math\math.cpp" />
+    <ClCompile Include="dependencies\utilities\console\console.cpp" />
+    <ClCompile Include="dependencies\utilities\csgo.cpp" />
+    <ClCompile Include="dependencies\utilities\json\json.cpp" />
+    <ClCompile Include="dependencies\utilities\netvars\netvars.cpp" />
+    <ClCompile Include="dependencies\utilities\post_processing\post_processing.cpp" />
+    <ClCompile Include="dependencies\utilities\renderer\renderer.cpp" />
+    <ClCompile Include="dependencies\utilities\utilities.cpp" />
+    <ClCompile Include="core\main.cpp" />
+    <ClCompile Include="source-sdk\math\vector3d.cpp" />
+    <ClCompile Include="source-sdk\math\view_matrix.cpp" />
+    <ClCompile Include="source-sdk\misc\valve_color.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="core\features\features.hpp" />
+    <ClInclude Include="core\features\misc\engine_prediction.hpp" />
+    <ClInclude Include="core\hooks\hooks.hpp" />
+    <ClInclude Include="core\menu\config\config.hpp" />
+    <ClInclude Include="core\menu\framework.hpp" />
+    <ClInclude Include="core\menu\menu.hpp" />
+    <ClInclude Include="core\menu\config\cheat_var.hpp" />
+    <ClInclude Include="dependencies\font\droid.hpp" />
+    <ClInclude Include="dependencies\imgui\freetype\config\ftconfig.h" />
+    <ClInclude Include="dependencies\imgui\freetype\config\ftheader.h" />
+    <ClInclude Include="dependencies\imgui\freetype\config\ftmodule.h" />
+    <ClInclude Include="dependencies\imgui\freetype\config\ftoption.h" />
+    <ClInclude Include="dependencies\imgui\freetype\config\ftstdlib.h" />
+    <ClInclude Include="dependencies\imgui\freetype\config\integer-types.h" />
+    <ClInclude Include="dependencies\imgui\freetype\config\mac-support.h" />
+    <ClInclude Include="dependencies\imgui\freetype\config\public-macros.h" />
+    <ClInclude Include="dependencies\imgui\freetype\freetype.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftadvanc.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftbbox.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftbdf.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftbitmap.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftbzip2.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftcache.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftchapters.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftcid.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftcolor.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftdriver.h" />
+    <ClInclude Include="dependencies\imgui\freetype\fterrdef.h" />
+    <ClInclude Include="dependencies\imgui\freetype\fterrors.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftfntfmt.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftgasp.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftglyph.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftgxval.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftgzip.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftimage.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftincrem.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftlcdfil.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftlist.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftlogging.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftlzw.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftmac.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftmm.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftmodapi.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftmoderr.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftotval.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftoutln.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftparams.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftpfr.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftrender.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftsizes.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftsnames.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftstroke.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftsynth.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftsystem.h" />
+    <ClInclude Include="dependencies\imgui\freetype\fttrigon.h" />
+    <ClInclude Include="dependencies\imgui\freetype\fttypes.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ftwinfnt.h" />
+    <ClInclude Include="dependencies\imgui\freetype\otsvg.h" />
+    <ClInclude Include="dependencies\imgui\freetype\t1tables.h" />
+    <ClInclude Include="dependencies\imgui\freetype\ttnameid.h" />
+    <ClInclude Include="dependencies\imgui\freetype\tttables.h" />
+    <ClInclude Include="dependencies\imgui\freetype\tttags.h" />
+    <ClInclude Include="dependencies\imgui\imconfig.h" />
+    <ClInclude Include="dependencies\imgui\imgui.h" />
+    <ClInclude Include="dependencies\imgui\imgui_impl_dx9.h" />
+    <ClInclude Include="dependencies\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="dependencies\imgui\imgui_internal.h" />
+    <ClInclude Include="dependencies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
+    <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
+    <ClInclude Include="dependencies\interfaces\c_particle_collection.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_filesystem.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_weapon_system.hpp" />
+    <ClInclude Include="dependencies\minhook\buffer.h" />
+    <ClInclude Include="dependencies\minhook\hde\hde32.h" />
+    <ClInclude Include="dependencies\minhook\hde\hde64.h" />
+    <ClInclude Include="dependencies\minhook\hde\pstdint.h" />
+    <ClInclude Include="dependencies\minhook\hde\table32.h" />
+    <ClInclude Include="dependencies\minhook\hde\table64.h" />
+    <ClInclude Include="dependencies\minhook\minhook.h" />
+    <ClInclude Include="dependencies\minhook\trampoline.h" />
+    <ClInclude Include="dependencies\interfaces\c_global_vars_base.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_player_movement.hpp">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="dependencies\interfaces\glow_manager.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_app_system.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_client_state.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_console.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_base_client_dll.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_client_entity_list.hpp" />
+    <ClInclude Include="dependencies\interfaces\ienginetrace.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_game_event_manager.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_input.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_input_system.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_localize.hpp" />
+    <ClInclude Include="dependencies\interfaces\imageformats.h" />
+    <ClInclude Include="dependencies\interfaces\i_material_system.hpp" />
+    <ClInclude Include="dependencies\interfaces\interfaces.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_panel.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_surface.hpp" />
+    <ClInclude Include="dependencies\interfaces\iv_debug_overlay.hpp" />
+    <ClInclude Include="dependencies\interfaces\iv_engine_client.hpp" />
+    <ClInclude Include="dependencies\interfaces\iv_model_info.hpp" />
+    <ClInclude Include="dependencies\interfaces\iv_model_render.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_render_view.hpp" />
+    <ClInclude Include="dependencies\interfaces\i_trace.hpp" />
+    <ClInclude Include="dependencies\math\math.hpp" />
+    <ClInclude Include="dependencies\resources\avatar_ct.h" />
+    <ClInclude Include="dependencies\resources\avatar_tt.h" />
+    <ClInclude Include="dependencies\resources\Resource.h" />
+    <ClInclude Include="dependencies\resources\Shaders\Build\Debug\blur_x.h" />
+    <ClInclude Include="dependencies\resources\Shaders\Build\Debug\blur_y.h" />
+    <ClInclude Include="dependencies\resources\Shaders\Build\Debug\chromatic_aberration.h" />
+    <ClInclude Include="dependencies\resources\Shaders\Build\Debug\default_vs.h" />
+    <ClInclude Include="dependencies\resources\Shaders\Build\Debug\monochrome.h" />
+    <ClInclude Include="dependencies\resources\skillgroups.h" />
+    <ClInclude Include="dependencies\utilities\console\console.hpp" />
+    <ClInclude Include="dependencies\utilities\fnv.hpp" />
+    <ClInclude Include="dependencies\utilities\json\json.hpp" />
+    <ClInclude Include="dependencies\utilities\netvars\netvars.hpp" />
+    <ClInclude Include="dependencies\utilities\post_processing\post_processing.h" />
+    <ClInclude Include="dependencies\utilities\renderer\renderer.hpp" />
+    <ClInclude Include="dependencies\utilities\csgo.hpp" />
+    <ClInclude Include="dependencies\utilities\singleton.hpp" />
+    <ClInclude Include="dependencies\utilities\utilities.hpp" />
+    <ClInclude Include="source-sdk\classes\client_class.hpp" />
+    <ClInclude Include="source-sdk\classes\collideable.hpp" />
+    <ClInclude Include="source-sdk\classes\convar.hpp" />
+    <ClInclude Include="source-sdk\classes\c_usercmd.hpp" />
+    <ClInclude Include="source-sdk\classes\entities.hpp" />
+    <ClInclude Include="source-sdk\classes\net_channel.hpp" />
+    <ClInclude Include="source-sdk\classes\recv_props.hpp" />
+    <ClInclude Include="source-sdk\classes\studio.hpp" />
+    <ClInclude Include="source-sdk\classes\trace.hpp" />
+    <ClInclude Include="source-sdk\classes\view_setup.h" />
+    <ClInclude Include="source-sdk\math\utl_vector.hpp" />
+    <ClInclude Include="source-sdk\math\vector2d.hpp" />
+    <ClInclude Include="source-sdk\math\vector3d.hpp" />
+    <ClInclude Include="source-sdk\math\view_matrix.hpp" />
+    <ClInclude Include="source-sdk\misc\color.hpp" />
+    <ClInclude Include="source-sdk\misc\valve_color.hpp" />
+    <ClInclude Include="source-sdk\sdk.hpp" />
+    <ClInclude Include="source-sdk\structs\animstate.hpp" />
+    <ClInclude Include="source-sdk\structs\dlight.hpp" />
+    <ClInclude Include="source-sdk\structs\materials.hpp" />
+    <ClInclude Include="source-sdk\structs\models.hpp" />
+    <ClInclude Include="source-sdk\structs\vertex_t.hpp" />
+    <ClInclude Include="source-sdk\structs\weaponinfo.hpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
