@@ -1,6 +1,5 @@
 #pragma once
 #include "../../dependencies/utilities/csgo.hpp"
-#include "framework.hpp"
 #include "config/cheat_var.hpp"
 #include "../../dependencies/imgui/imgui_internal.h"
 #include "../../dependencies//imgui/imgui.h"
@@ -11,7 +10,7 @@ namespace menu {
     void initialize();
     void render();
 
-    inline static int current_tab = 4;
+    inline static int current_tab = 5;
 
     namespace settings {
         inline bool open = false;
@@ -20,6 +19,8 @@ namespace menu {
         inline ImFont* tahoma3;
         inline float alpha = 1.f;
         inline static float animation_frequency = 2.f;
+        static float width = 736.f, height = 400.f;
+
 
         static int weapon_index = 7;
         static int weapon_vector_index = 0;
@@ -43,5 +44,6 @@ namespace menu {
         void legit();
         void visuals();
         void misc();
+        void settings();
     }
 };

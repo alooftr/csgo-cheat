@@ -5157,16 +5157,15 @@ bool ImGui::BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, b
     SetNextWindowSize(size);
 
     // Build up name. If you need to append to a same child from multiple location in the ID stack, use BeginChild(ImGuiID id) with a stable value.
-    char title[256];
     if (name)
-        ImFormatString(title, IM_ARRAYSIZE(title), "%s/%s_%08X", parent_window->Name, name, id);
+        ImFormatString(g.TempBuffer, IM_ARRAYSIZE(g.TempBuffer), "%s/%s_%08X", parent_window->Name, name, id);
     else
-        ImFormatString(title, IM_ARRAYSIZE(title), "%s/%08X", parent_window->Name, id);
+        ImFormatString(g.TempBuffer, IM_ARRAYSIZE(g.TempBuffer), "%s/%08X", parent_window->Name, id);
 
     const float backup_border_size = g.Style.ChildBorderSize;
     if (!border)
         g.Style.ChildBorderSize = 0.0f;
-    bool ret = Begin(title, NULL, flags);
+    bool ret = Begin(g.TempBuffer, NULL, flags);
     g.Style.ChildBorderSize = backup_border_size;
 
     ImGuiWindow* child_window = g.CurrentWindow;
@@ -5183,22 +5182,9 @@ bool ImGui::BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, b
     {
         FocusWindow(child_window);
         NavInitWindow(child_window, false);
-        SetActiveID(id + 1, child_window); // Steal ActiveId with a dummy id so that key-press won't activate child item
+        SetActiveID(id + 1, child_window); // Steal ActiveId with another arbitrary id so that key-press won't activate child item
         g.ActiveIdSource = ImGuiInputSource_Nav;
     }
-
-    // parent_window->DrawList->AddRectFilled(ImGui::GetWindowPos(), { ImGui::GetWindowPos().x + size_arg.x ,ImGui::GetWindowPos().y + size_arg.y }, ImColor(52, 50, 59));
-
-
-     //fioletowy
-    //parent_window->DrawList->AddRectFilled({ ImGui::GetWindowPos().x - 3 ,ImGui::GetWindowPos().y - 33 }, { ImGui::GetWindowPos().x + size_arg.x + 3 ,ImGui::GetWindowPos().y }, ImColor(62, 66, 141));
-
-    //szary
-    //parent_window->DrawList->AddRectFilled({ ImGui::GetWindowPos().x - 3 ,ImGui::GetWindowPos().y }, { ImGui::GetWindowPos().x + size_arg.x + 3 ,ImGui::GetWindowPos().y + 3 }, ImColor(20, 20, 20, 50));
-
-    //text
-   // parent_window->DrawList->AddText({ ImGui::GetWindowPos().x - 3 + size_arg.x / 2 - ImGui::CalcTextSize(name).x / 2 ,ImGui::GetWindowPos().y - 30 / 2 - ImGui::CalcTextSize(name).y / 2 }, ImColor(255, 255, 255, 255), name);
-
     return ret;
 }
 

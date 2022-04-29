@@ -1,8 +1,8 @@
 #include "menu.hpp"
 
-#define GROUPBOX_FIRST_POSITION 14, 100
-#define GROUPBOX_SECOND_POSITION 338,100
-#define GROUPBOX_SIZE 308, 400
+#define GROUPBOX_FIRST_POSITION 10, 90
+#define GROUPBOX_SECOND_POSITION 405, 90
+#define GROUPBOX_SIZE 385, 302
 
 auto update_animation_alpha = [&]() {
     auto& style = ImGui::GetStyle();
@@ -15,6 +15,66 @@ auto tool_tip = [&](const std::string& string) {
     if (ImGui::IsItemHovered())
         menu::widgets::tool_tips.emplace_back(string);
 };
+
+std::vector<char> loadBinaryFile(const std::string& path) noexcept
+{
+    std::vector<char> result;
+    std::ifstream in{ path, std::ios::binary };
+    if (!in)
+        return result;
+    in.seekg(0, std::ios_base::end);
+    result.resize(static_cast<std::size_t>(in.tellg()));
+    in.seekg(0, std::ios_base::beg);
+    in.read(result.data(), result.size());
+    return result;
+}
+
+bool decodeVFONT(std::vector<char>& buffer) noexcept
+{
+    constexpr std::string_view tag = "VFONT1";
+    unsigned char magic = 0xA7;
+
+    if (buffer.size() <= tag.length())
+        return false;
+
+    const auto tagIndex = buffer.size() - tag.length();
+    if (std::memcmp(tag.data(), &buffer[tagIndex], tag.length()))
+        return false;
+
+    unsigned char saltBytes = buffer[tagIndex - 1];
+    const auto saltIndex = tagIndex - saltBytes;
+    --saltBytes;
+
+    for (std::size_t i = 0; i < saltBytes; ++i)
+        magic ^= (buffer[saltIndex + i] + 0xA7) % 0x100;
+
+    for (std::size_t i = 0; i < saltIndex; ++i) {
+        unsigned char xored = buffer[i] ^ magic;
+        magic = (buffer[i] + 0xA7) % 0x100;
+        buffer[i] = xored;
+    }
+
+    buffer.resize(saltIndex);
+    return true;
+}
+
+static ImFont* addFontFromVFONT(const std::string& path, float size, const ImWchar* glyphRanges, bool merge) noexcept
+{
+    auto file = loadBinaryFile(path);
+    if (!decodeVFONT(file))
+        return nullptr;
+
+    ImFontConfig cfg;
+    cfg.FontData = file.data();
+    cfg.FontDataSize = file.size();
+    cfg.FontDataOwnedByAtlas = false;
+    cfg.MergeMode = merge;
+    cfg.GlyphRanges = glyphRanges;
+    cfg.SizePixels = size;
+
+    return ImGui::GetIO().Fonts->AddFont(&cfg);
+}
+
 
 std::vector<menu::settings::weapon_name_t> weapon_names = {
     { item_definition_indexes::WEAPON_AK47, "ak-47" },
@@ -62,6 +122,7 @@ void menu::initialize() {
     io.LogFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
     
+
     menu::settings::tahoma = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
         Droid_compressed_data,
         Droid_compressed_size,
@@ -135,7 +196,7 @@ void menu::render() {
     style.Colors[ImGuiCol_FrameBg] = ImVec4(45.f / 255.f, 44.f / 255.f, 54.f / 255, style.Alpha);
     style.Colors[ImGuiCol_PopupBg] = ImVec4(45.f / 255.f, 44.f / 255.f, 54.f / 255.f, style.Alpha);
 
-    style.Colors[ImGuiCol_ChildBg] = ImVec4(64.f / 255.f, 64.f / 255.f, 64.f / 255.f, style.Alpha);
+    style.Colors[ImGuiCol_ChildBg] = ImVec4(32.f / 255.f, 32.f / 255.f, 32.f / 255.f, style.Alpha);
 
     style.Colors[ImGuiCol_PlotHistogram] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
 
@@ -147,7 +208,7 @@ void menu::render() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0,0 });
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 
-    ImGui::SetNextWindowSize(ImVec2(800.000f, 400.000f), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(menu::settings::width, menu::settings::height), ImGuiCond_Always);
     if (ImGui::Begin("csgo-cheat", &menu::settings::open, flags)) {
         menu::settings::alpha = std::clamp(menu::settings::alpha + menu::settings::animation_frequency * ImGui::GetIO().DeltaTime, 0.f, 1.f);
         style.Alpha = menu::settings::alpha;
@@ -158,79 +219,75 @@ void menu::render() {
         const auto& pWindowDrawList = ImGui::GetWindowDrawList();
         const auto& pBackgroundDrawList = ImGui::GetBackgroundDrawList();
         const auto& pForegroundDrawList = ImGui::GetForegroundDrawList();
-
+        //Background 
         P1 = ImVec2(0.000f, 0.000f);
         P1.x += CurrentWindowPos.x;
         P1.y += CurrentWindowPos.y;
-        P2 = ImVec2(800.000f, 400.000f);
+        P2 = ImVec2(menu::settings::width, menu::settings::height);
         P2.x += CurrentWindowPos.x;
         P2.y += CurrentWindowPos.y;
         pDrawList = pWindowDrawList;
         pDrawList->AddRectFilled(P1, P2, ImColor(0.125f, 0.125f, 0.125f, 1.000f), 0.000f);
-
+        //Background Outline
         P1 = ImVec2(0.000f, 0.000f);
         P1.x += CurrentWindowPos.x;
         P1.y += CurrentWindowPos.y;
-        P2 = ImVec2(800.000f, 400.000f);
+        P2 = ImVec2(menu::settings::width, menu::settings::height);
         P2.x += CurrentWindowPos.x;
         P2.y += CurrentWindowPos.y;
         pDrawList = pForegroundDrawList;
-        pDrawList->AddRect(P1, P2, ImColor(0.251f, 0.251f, 0.251f, 1.000f), 0.000f);
-
-        P1 = ImVec2(0.000f, 55.000f);
+        pDrawList->AddRect(P1, P2, ImColor(0.25f, 0.25f, 0.25f, 1.000f), 0.000f);
+        //Main tab separator
+        P1 = ImVec2(100.000f, 0.000f);
         P1.x += CurrentWindowPos.x;
         P1.y += CurrentWindowPos.y;
-        P2 = ImVec2(800.000f, 85.000f);
+        P2 = ImVec2(100.000f, 400.000f);
         P2.x += CurrentWindowPos.x;
         P2.y += CurrentWindowPos.y;
         pDrawList = pForegroundDrawList;
-        pDrawList->AddRect(P1, P2, ImColor(0.251f, 0.251f, 0.251f, 1.000f), 0.000f);
+        pDrawList->AddRect(P1, P2, ImColor(0.25f, 0.25f, 0.25f, 1.000f), 0.000f);
 
-        P1 = ImVec2(250.f, 0.f);
-        P1.x += CurrentWindowPos.x;
-        P1.y += CurrentWindowPos.y;
-        P2 = ImVec2(800.000f, 50.000f);
-        P2.x += CurrentWindowPos.x;
-        P2.y += CurrentWindowPos.y;
-        pDrawList = pWindowDrawList;
-        pDrawList->AddRectFilledMultiColor(P1, P2,
-            ImColor(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], 1.f),    //upper left
-            ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], 1.f),    //upper riggt
-            ImColor(0.000f, 0.000f, 0.000f, 0.f),    //bottom left
-            ImColor(0.000f, 0.000f, 0.000f, 0.f));   //bottom right
+        ImGui::SetCursorPos(ImVec2(8.000f, 20.000f));
+        if (ImGui::Tab("Rage", "", { 85.000f, 0.000f }, current_tab == 0 ? true : false)) {
+            current_tab = 0;
+            update_animation_alpha();
+        }
 
-        ImGui::SetCursorPos(ImVec2(260.000f, 20.000f));
-        if (ImGui::Tab("Rage", "", { 100.000f, 0.000f }, current_tab == 1 ? true : false)) {
+        ImGui::SetCursorPos(ImVec2(8.000f, 20.000f + 25.f));
+        if (ImGui::Tab("Legit", "", { 85.000f, 0.000f }, current_tab == 1 ? true : false)) {
             current_tab = 1;
             update_animation_alpha();
         }
 
-        ImGui::SameLine();
-        if (ImGui::Tab("Anti-Aim", "", { 100.000f, 0.000f }, current_tab == 2 ? true : false)) {
+        ImGui::SetCursorPos(ImVec2(8.000f, 20.000f + 25.f * 2));
+        if (ImGui::Tab("Anti-Aim", "", { 85.000f, 0.000f }, current_tab == 2 ? true : false)) {
             current_tab = 2;
             update_animation_alpha();
         }
 
-        ImGui::SameLine();
-        if (ImGui::Tab("Legit", "", { 100.000f, 0.000f }, current_tab == 3 ? true : false)) {
+        ImGui::SetCursorPos(ImVec2(8.000f, 20.000f + 25.f * 3));
+        if (ImGui::Tab("Visuals", "", { 85.000f, 0.000f }, current_tab == 3 ? true : false)) {
             current_tab = 3;
             update_animation_alpha();
         }
 
-        ImGui::SameLine();
-        if (ImGui::Tab("Visuals", "", { 100.000f, 0.000f }, current_tab == 4 ? true : false)) {
+        ImGui::SetCursorPos(ImVec2(8.000f, 20.000f + 25.f * 4));
+        if (ImGui::Tab("Misc", "", { 85.000f, 0.000f }, current_tab == 4 ? true : false)) {
             current_tab = 4;
             update_animation_alpha();
         }
 
-
-        ImGui::SameLine();
-        if (ImGui::Tab("Misc", "", { 100.000f, 0.000f }, current_tab == 5 ? true : false)) {
+        ImGui::SetCursorPos(ImVec2(8.000f, 20.000f + 25.f * 5));
+        if (ImGui::Tab("Settings", "", { 85.000f, 0.000f }, current_tab == 5 ? true : false)) {
             current_tab = 5;
             update_animation_alpha();
         }
 
-        if (current_tab == 1) {
+
+        if (current_tab == 0) {
+
+        }
+        else if (current_tab == 1) {
 
         }
         else if (current_tab == 2) {
@@ -240,190 +297,82 @@ void menu::render() {
 
         }
         else if (current_tab == 4) {
-
         }
         else if (current_tab == 5) {
-            tabs::misc();
+            tabs::settings();
         }
+
         ImGui::End();
     }
     ImGui::PopStyleColor();
     ImGui::PopStyleVar(3);
 }
 
-void menu::tabs::misc() {
-    static int tab = 0;
-
-    ImGui::SetCursorPos({ 0 ,50 });
-    if (ImGui::SubTab("General", "", { 192, 37 }, tab == 0 ? true : false)) {
-        tab = 0;
-        update_animation_alpha();
-    }
-
-    ImGui::SetCursorPos({ 192,50 });
-    if (ImGui::SubTab("Config", "", { 192, 37 }, tab == 1 ? true : false)) {
-        tab = 1;
-        update_animation_alpha();
-    }
-
-    ImGui::SetCursorPos({ 192 * 2,50 });
-    if (ImGui::SubTab("Others", "", { 192, 37 }, tab == 2 ? true : false)) {
-        tab = 2;
-        update_animation_alpha();
-    }
-
-    ImGui::SetCursorPos({ 192 * 3,50 });
-    if (ImGui::SubTab("Editor", "", { 192, 37 }, tab == 3 ? true : false)) {
-        tab = 3;
-        update_animation_alpha();
-    }
-
-    if (tab == 0) {
-
-    }
-    else if (tab == 1) {
-        ImGui::SetCursorPos({ 10, 90 });
-        ImGui::BeginChild("config", ImVec2(385, 302), false, ImGuiWindowFlags_NoTitleBar);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
-        ImGui::PushFont(menu::settings::tahoma3);
-
-        ImGui::PopFont();
-        ImGui::EndChild();
-
-        ImGui::SetCursorPos({ 405, 90 });
-        ImGui::BeginChild("settings", ImVec2(385, 302), false, ImGuiWindowFlags_NoTitleBar);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
-        ImGui::PushFont(menu::settings::tahoma3);
-
-        ImGui::PopFont();
-        ImGui::EndChild();
-    }
-    else if (tab == 2) {
-
-    }
-    else if (tab == 3) {
-        ImGui::SetCursorPos({ 10, 90 });
-        ImGui::BeginChild("Menu Themes", ImVec2(770, 302), false, ImGuiWindowFlags_NoTitleBar);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
-
-        ImGui::ColorEdit3("Menu Color##menu_color", variables::menu_clr);
-
-        ImGui::Spacing();
-        ImGui::Spacing();
-        ImGui::Spacing();
-
-        ImGui::ShowStyleEditor();
-
-        ImGui::EndChild();
-    }
-}
-
-void conf2ig() {
+void menu::tabs::settings() {
     static int config_tab = 0;
     static const char* configs[] = { "1", "2", "3", "4", "5" };
     static const char* choices[]{ "  yes", "  no" };
     static int current_config = 0;
 
-    static int tab = 0;
+    ImGui::SetCursorPos({ 100 + 12, 8 });
+    ImGui::BeginChild("Config", ImVec2(300, 385));
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
+    ImGui::PushFont(menu::settings::tahoma3);
 
-    ImGui::SetCursorPos({ 0 ,50 });
-    if (ImGui::SubTab("Config", "", { 330,37 }, tab == 0 ? false : true)) {
-        tab = 0;
-        update_animation_alpha();
+    ImGui::Combo(("configuration"), &current_config, configs, IM_ARRAYSIZE(configs));
+
+    if (ImGui::Button(("save"))) {
+        ImGui::OpenPopup(("config save popup"));
     }
 
-    ImGui::SetCursorPos({ 330,50 });
-    if (ImGui::SubTab("Themes", "", { 330,37 }, tab == 1 ? false : true)) {
-        tab = 1;
-        update_animation_alpha();
-    }
+    if (ImGui::BeginPopup(("config save popup"))) {
+        ImGui::Text(("are you sure you want to save selected config? "));
 
-
-    if (tab == 0) {
-
-
-        ImGui::SetCursorPos({ GROUPBOX_FIRST_POSITION });
-        ImGui::BeginChild("config", ImVec2(GROUPBOX_SIZE), false, ImGuiWindowFlags_NoTitleBar);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
-        ImGui::PushFont(menu::settings::tahoma3);
-
-        ImGui::Combo(("##config"), &current_config, configs, IM_ARRAYSIZE(configs));
-        if (ImGui::Button(("save"), ImVec2(200.f, 20))) {
-            ImGui::OpenPopup(("config save popup"));
-        }
-
-        if (ImGui::BeginPopup(("config save popup"))) {
-            ImGui::Text(("are you sure you want to save selected config? "));
-
-            for (auto i = 0; i < IM_ARRAYSIZE(choices); i++)
-                if (ImGui::Selectable(choices[i]))
-                    if (i == 0) {
-                        config::save(configs[current_config]);
-                        console::log("[config]", std::string("successfully saved config at slot: ").append(std::to_string(current_config + 1)).c_str());
-                        interfaces::console->console_color_printf(Color(255, 255, 0, 255), std::string("successfully saved config at slot: ").append(std::to_string(current_config + 1)).c_str());
-                    }
-
-            ImGui::Spacing();
-
-            ImGui::EndPopup();
-        }
-
-        if (ImGui::Button(("load"), ImVec2(200.f, 20))) {
-            ImGui::OpenPopup(("config load popup"));
-        }
-
-        if (ImGui::BeginPopup(("config load popup"))) {
-            ImGui::Text(("are you sure you want to load selected config? "));
-
-            for (auto i = 0; i < IM_ARRAYSIZE(choices); i++)
-                if (ImGui::Selectable(choices[i]))
-                    if (i == 0) {
-                        config::load(configs[current_config]);
-                        console::log("[config]", std::string("successfully loaded config at slot: ").append(std::to_string(current_config + 1)).c_str());
-                        interfaces::console->console_color_printf(Color(255, 255, 0, 255), std::string("successfully loaded config at slot: ").append(std::to_string(current_config + 1)).c_str());
-                    }
-
-            ImGui::Spacing();
-
-            ImGui::EndPopup();
-        }
-
-        if (ImGui::Button(("open configuration folder"), ImVec2(200.f, 20)))
-            ShellExecuteW(0, L"open", L"C:/csgo_cheat/configs", NULL, NULL, SW_NORMAL);
-
-        ImGui::PopFont();
-
-        ImGui::EndChild();
-
-        ImGui::SetCursorPos({ GROUPBOX_SECOND_POSITION });
-        ImGui::BeginChild("Info", ImVec2(GROUPBOX_SIZE), false, ImGuiWindowFlags_NoTitleBar);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
-        ImGui::PushFont(menu::settings::tahoma3);
-
-        ImGui::Text(("Compilation date: " __DATE__ " - " __TIME__));
-        ImGui::Text("Will be more soon ig?...");
-
-        ImGui::PopFont();
-
-        ImGui::EndChild();
-    }
-    else if (tab == 1)
-    {
-        //Child 1
-        ImGui::SetCursorPos({ GROUPBOX_FIRST_POSITION });
-        ImGui::BeginChild("Menu Themes", ImVec2(316 * 2, 400), false, ImGuiWindowFlags_NoTitleBar);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
-        ImGui::PushFont(menu::settings::tahoma3);
-
-        ImGui::ColorEdit3("Menu Color##menu_color", variables::menu_clr);
+        for (auto i = 0; i < IM_ARRAYSIZE(choices); i++)
+            if (ImGui::Selectable(choices[i]))
+                if (i == 0) {
+                    config::save(configs[current_config]);
+                }
 
         ImGui::Spacing();
-        ImGui::Spacing();
-        ImGui::Spacing();
 
-        ImGui::ShowStyleEditor();
-
-        ImGui::PopFont();
-        ImGui::EndChild();
+        ImGui::EndPopup();
     }
+
+    if (ImGui::Button(("load"))) {
+        ImGui::OpenPopup(("config load popup"));
+    }
+
+    if (ImGui::BeginPopup(("config load popup"))) {
+        ImGui::Text(("are you sure you want to load selected config? "));
+
+        for (auto i = 0; i < IM_ARRAYSIZE(choices); i++)
+            if (ImGui::Selectable(choices[i]))
+                if (i == 0) {
+                    config::load(configs[current_config]);
+                }
+
+        ImGui::Spacing();
+
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::Button(("open configuration folder")))
+        ShellExecuteW(0, L"open", L"C:/csgo_base/configs", NULL, NULL, SW_NORMAL);
+
+
+    ImGui::PopFont();
+    ImGui::EndChild();
+
+    ImGui::SetCursorPos({ 300 + 100 + 12 * 2 + 1, 8 });
+    ImGui::BeginChild("Info", ImVec2(300, 385));
+
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
+    ImGui::PushFont(menu::settings::tahoma3);
+
+    ImGui::Text(("compilation date: " __DATE__ " - " __TIME__));
+    ImGui::Text(std::strstr(GetCommandLineA(), "-insecure") ? ("insecure mode!") : ("insecure parameter not found."));
+
+    ImGui::PopFont();
+    ImGui::EndChild();
 }
