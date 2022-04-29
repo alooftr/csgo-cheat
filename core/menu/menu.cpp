@@ -1,10 +1,10 @@
 #include "menu.hpp"
 
-#define GROUPBOX_FIRST_POSITION 10, 90
-#define GROUPBOX_SECOND_POSITION 405, 90
-#define GROUPBOX_SIZE 385, 302
+#define CHILD_FIRST_POS 100 + 12, 8
+#define CHILD_SECOND_POS 100 + 12 * 2 + 302, 8 //(CHILD_POS_X + (CHILD_SIZE_SPACE * 2) + (CHILD_SIZE_SIZE_W + 2)), CHILD_POS_HEIGHT
+#define CHILD_SIZE 300, 385
 
-auto update_animation_alpha = [&]() {
+void update_animation_alpha() {
     auto& style = ImGui::GetStyle();
     menu::settings::alpha = 0.f;
     menu::settings::alpha = std::clamp(menu::settings::alpha + menu::settings::animation_frequency * ImGui::GetIO().DeltaTime, 0.f, 1.f);
@@ -15,66 +15,6 @@ auto tool_tip = [&](const std::string& string) {
     if (ImGui::IsItemHovered())
         menu::widgets::tool_tips.emplace_back(string);
 };
-
-std::vector<char> loadBinaryFile(const std::string& path) noexcept
-{
-    std::vector<char> result;
-    std::ifstream in{ path, std::ios::binary };
-    if (!in)
-        return result;
-    in.seekg(0, std::ios_base::end);
-    result.resize(static_cast<std::size_t>(in.tellg()));
-    in.seekg(0, std::ios_base::beg);
-    in.read(result.data(), result.size());
-    return result;
-}
-
-bool decodeVFONT(std::vector<char>& buffer) noexcept
-{
-    constexpr std::string_view tag = "VFONT1";
-    unsigned char magic = 0xA7;
-
-    if (buffer.size() <= tag.length())
-        return false;
-
-    const auto tagIndex = buffer.size() - tag.length();
-    if (std::memcmp(tag.data(), &buffer[tagIndex], tag.length()))
-        return false;
-
-    unsigned char saltBytes = buffer[tagIndex - 1];
-    const auto saltIndex = tagIndex - saltBytes;
-    --saltBytes;
-
-    for (std::size_t i = 0; i < saltBytes; ++i)
-        magic ^= (buffer[saltIndex + i] + 0xA7) % 0x100;
-
-    for (std::size_t i = 0; i < saltIndex; ++i) {
-        unsigned char xored = buffer[i] ^ magic;
-        magic = (buffer[i] + 0xA7) % 0x100;
-        buffer[i] = xored;
-    }
-
-    buffer.resize(saltIndex);
-    return true;
-}
-
-static ImFont* addFontFromVFONT(const std::string& path, float size, const ImWchar* glyphRanges, bool merge) noexcept
-{
-    auto file = loadBinaryFile(path);
-    if (!decodeVFONT(file))
-        return nullptr;
-
-    ImFontConfig cfg;
-    cfg.FontData = file.data();
-    cfg.FontDataSize = file.size();
-    cfg.FontDataOwnedByAtlas = false;
-    cfg.MergeMode = merge;
-    cfg.GlyphRanges = glyphRanges;
-    cfg.SizePixels = size;
-
-    return ImGui::GetIO().Fonts->AddFont(&cfg);
-}
-
 
 std::vector<menu::settings::weapon_name_t> weapon_names = {
     { item_definition_indexes::WEAPON_AK47, "ak-47" },
@@ -164,7 +104,7 @@ void menu::widgets::current_weapon_button(float width) {
 void menu::render() {
     if (!menu::settings::open)
         return;
-    //styling
+    //Styling
     ImGui::StyleColorsClassic();
 
     auto& style = ImGui::GetStyle();
@@ -173,16 +113,15 @@ void menu::render() {
     style.ScrollbarSize = 9.0f;
     style.WindowRounding = 0.f;
     style.Colors[ImGuiCol_WindowBg] = ImColor(20.f / 255.f, 20.f / 255.f, 20.f / 255.f, style.Alpha);
-    style.Colors[ImGuiCol_Border] = ImColor(61.f / 255.f, 65.f / 255.f, 137.f / 255.f, style.Alpha);
-    style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(52.f / 255.f, 50.f / 255.f, 59.f / 255.f, style.Alpha);
+    style.Colors[ImGuiCol_Border] = ImColor(96.f / 255.f, 96.f / 255.f, 96.f / 255.f, style.Alpha);
+    style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(64.f / 255.f, 64.f / 255.f, 64.f / 255.f, style.Alpha);
     style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
     style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(variables::menu_clr[0] + (20.f / 255.f), variables::menu_clr[1] + (20.f / 255.f), variables::menu_clr[2] + (20.f / 255.f), style.Alpha);
     style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
 
-
     style.Colors[ImGuiCol_SliderGrab] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
     style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
-    style.Colors[ImGuiCol_FrameBgActive] = ImVec4(65.f / 255.f, 64.f / 255.f, 74.f / 255, style.Alpha);
+    style.Colors[ImGuiCol_FrameBgActive] = ImVec4(64.f / 255.f, 64.f / 255.f, 64.f / 255, style.Alpha);
 
     style.Colors[ImGuiCol_Button] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
     style.Colors[ImGuiCol_ButtonHovered] = ImVec4(variables::menu_clr[0] + (20.f / 255.f), variables::menu_clr[1] + (20.f / 255.f), variables::menu_clr[2] + (20.f / 255.f), style.Alpha);
@@ -192,9 +131,9 @@ void menu::render() {
     style.Colors[ImGuiCol_HeaderHovered] = ImVec4(variables::menu_clr[0] + (20.f / 255.f), variables::menu_clr[1] + (20.f / 255.f), variables::menu_clr[2] + (20.f / 255.f), style.Alpha);
     style.Colors[ImGuiCol_HeaderActive] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
 
-    style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(85.f / 255.f, 84.f / 255.f, 94.f / 255, style.Alpha);
-    style.Colors[ImGuiCol_FrameBg] = ImVec4(45.f / 255.f, 44.f / 255.f, 54.f / 255, style.Alpha);
-    style.Colors[ImGuiCol_PopupBg] = ImVec4(45.f / 255.f, 44.f / 255.f, 54.f / 255.f, style.Alpha);
+    style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(96.f / 255.f, 96.f / 255.f, 96.f / 255, style.Alpha);
+    style.Colors[ImGuiCol_FrameBg] = ImVec4(64.f / 255.f, 64.f / 255.f, 64.f / 255.f, style.Alpha);
+    style.Colors[ImGuiCol_PopupBg] = ImVec4(64.f / 255.f, 64.f / 255.f, 64.f / 255.f, style.Alpha);
 
     style.Colors[ImGuiCol_ChildBg] = ImVec4(32.f / 255.f, 32.f / 255.f, 32.f / 255.f, style.Alpha);
 
@@ -202,12 +141,14 @@ void menu::render() {
 
     style.Colors[ImGuiCol_PlotHistogram] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
 
+    style.Colors[ImGuiCol_Text] = ImVec4(1.f, 1.f, 1.f, 1.f);
+
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0,0 });
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-
+    //Menu begin
     ImGui::SetNextWindowSize(ImVec2(menu::settings::width, menu::settings::height), ImGuiCond_Always);
     if (ImGui::Begin("csgo-cheat", &menu::settings::open, flags)) {
         menu::settings::alpha = std::clamp(menu::settings::alpha + menu::settings::animation_frequency * ImGui::GetIO().DeltaTime, 0.f, 1.f);
@@ -246,7 +187,7 @@ void menu::render() {
         P2.y += CurrentWindowPos.y;
         pDrawList = pForegroundDrawList;
         pDrawList->AddRect(P1, P2, ImColor(0.25f, 0.25f, 0.25f, 1.000f), 0.000f);
-
+        //Main Tab
         ImGui::SetCursorPos(ImVec2(8.000f, 20.000f));
         if (ImGui::Tab("Rage", "", { 85.000f, 0.000f }, current_tab == 0 ? true : false)) {
             current_tab = 0;
@@ -282,21 +223,21 @@ void menu::render() {
             current_tab = 5;
             update_animation_alpha();
         }
-
-
+        //Inside tab setup
         if (current_tab == 0) {
-
+            tabs::rage();
         }
         else if (current_tab == 1) {
-
+            tabs::legit();
         }
         else if (current_tab == 2) {
-
+            tabs::anti_aim();
         }
         else if (current_tab == 3) {
-
+            tabs::visuals();
         }
         else if (current_tab == 4) {
+            tabs::misc();
         }
         else if (current_tab == 5) {
             tabs::settings();
@@ -308,14 +249,31 @@ void menu::render() {
     ImGui::PopStyleVar(3);
 }
 
+void menu::tabs::rage() {
+
+}
+
+void menu::tabs::anti_aim() {
+
+}
+void menu::tabs::legit() {
+
+}
+void menu::tabs::visuals() {
+
+}
+void menu::tabs::misc() {
+
+}
+
 void menu::tabs::settings() {
     static int config_tab = 0;
     static const char* configs[] = { "1", "2", "3", "4", "5" };
     static const char* choices[]{ "  yes", "  no" };
     static int current_config = 0;
 
-    ImGui::SetCursorPos({ 100 + 12, 8 });
-    ImGui::BeginChild("Config", ImVec2(300, 385));
+    ImGui::SetCursorPos({ CHILD_FIRST_POS });
+    ImGui::BeginChild("Config", { CHILD_SIZE });
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
     ImGui::PushFont(menu::settings::tahoma3);
 
@@ -360,18 +318,20 @@ void menu::tabs::settings() {
     if (ImGui::Button(("open configuration folder")))
         ShellExecuteW(0, L"open", L"C:/csgo_base/configs", NULL, NULL, SW_NORMAL);
 
+    ImGui::Spacing();
+    ImGui::SliderInt("Slider 1", &variables::test_int, 0, 100);
 
     ImGui::PopFont();
     ImGui::EndChild();
-
-    ImGui::SetCursorPos({ 300 + 100 + 12 * 2 + 1, 8 });
-    ImGui::BeginChild("Info", ImVec2(300, 385));
+    //2nd Child
+    ImGui::SetCursorPos({ CHILD_SECOND_POS });
+    ImGui::BeginChild("Info", { CHILD_SIZE });
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
     ImGui::PushFont(menu::settings::tahoma3);
 
     ImGui::Text(("compilation date: " __DATE__ " - " __TIME__));
-    ImGui::Text(std::strstr(GetCommandLineA(), "-insecure") ? ("insecure mode!") : ("insecure parameter not found."));
+    ImGui::Text(std::strstr(GetCommandLineA(), "-insecure") ? ("insecure parameter found, VAC disabled!") : ("[WARNING] insecure parameter not found make sure you injected with VAC bypass!"));
 
     ImGui::PopFont();
     ImGui::EndChild();

@@ -9,7 +9,6 @@ WNDPROC hooks::wndproc_original = NULL;
 float alpha = 0.f;
 float animation_frequency = 0.75f;
 
-
 bool hooks::initialize() {
 	auto present_target = reinterpret_cast<void*>(get_virtual(interfaces::device, present::index));
 	auto reset_target = reinterpret_cast<void*>(get_virtual(interfaces::device, reset::index));
@@ -351,5 +350,6 @@ bool __fastcall hooks::loose_file_allowed::hook(void* edc, void* edx) {
 }
 
 int __stdcall hooks::get_unverified_file_hashes::hook(void* _this, void* some_class, int max_files) {
+	console::log("[hooks]", "get_unverified_file_hashes on!");
 	return 0;
 }
