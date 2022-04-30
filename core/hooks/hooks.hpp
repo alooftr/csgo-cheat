@@ -10,7 +10,7 @@ namespace hooks {
 
 	namespace present {
 		static constexpr auto index = 17;
-		long __stdcall hook(IDirect3DDevice9* device, RECT* source_rect, RECT* dest_rect, HWND dest_window_override, RGNDATA* dirty_region);
+		static HRESULT D3DAPI hook(IDirect3DDevice9* device, RECT* source_rect, RECT* dest_rect, HWND dest_window_override, RGNDATA* dirty_region);
 		using fn = long(__stdcall*)(IDirect3DDevice9*, RECT*, RECT*, HWND, RGNDATA*);
 		inline fn original = nullptr;
 	}

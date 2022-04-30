@@ -4,7 +4,7 @@
 #include "../../dependencies/imgui/imgui_internal.h"
 #include "../../dependencies//imgui/imgui.h"
 #include "config/config.hpp"
-#include "../../dependencies/font/droid.hpp"
+#include "../../dependencies/resources/font/memory_font.hpp"
 
 namespace menu {
     void initialize();
@@ -14,9 +14,8 @@ namespace menu {
 
     namespace settings {
         inline bool open = false;
-        inline ImFont* tahoma;
-        inline ImFont* tahoma2;
-        inline ImFont* tahoma3;
+        inline ImFont *menu_font_12, *menu_font_14, *menu_font_16;
+
         inline float alpha = 1.f;
         inline static float animation_frequency = 2.f;
         static float width = 736.f, height = 400.f;

@@ -265,6 +265,8 @@ void ImGui::TextUnformatted(const char* text, const char* text_end)
 
 void ImGui::Text(const char* fmt, ...)
 {
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
     va_list args;
     va_start(args, fmt);
     TextV(fmt, args);
@@ -673,6 +675,8 @@ bool ImGui::ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool
 
 bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flags)
 {
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -1848,6 +1852,8 @@ static bool Items_SingleStringGetter(void* data, int idx, const char** out_text)
 // Old API, prefer using BeginCombo() nowadays if you can.
 bool ImGui::Combo(const char* label, int* current_item, bool (*items_getter)(void*, int, const char**), void* data, int items_count, int popup_max_height_in_items)
 {
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
     ImGuiContext& g = *GImGui;
 
     // Call the getter to obtain the preview string which is a parameter to BeginCombo()
@@ -2982,6 +2988,8 @@ struct slider_state
 
 bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format, ImGuiSliderFlags flags)
 {
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -4933,6 +4941,8 @@ static void ColorEditRestoreHS(const float* col, float* H, float* S, float* V)
 // With typical options: Left-click on color square to open color picker. Right-click to open option menu. CTRL-Click over input fields to edit them and TAB to go to next item.
 bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flags)
 {
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;

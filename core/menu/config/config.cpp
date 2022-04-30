@@ -10,7 +10,7 @@ void config::initialize() {
 }
 
 void config::save(const std::string name) {
-	const auto path = directory_path + "/" + name + ".csgc";
+	const auto path = directory_path + "/" + name + ".json";
 	std::ofstream out(path);
 
 	if (!out.is_open())
@@ -27,7 +27,7 @@ void config::save(const std::string name) {
 }
 
 void config::load(const std::string name) {
-	const auto path = directory_path + "/" + name + ".csgc";
+	const auto path = directory_path + "/" + name + ".json";
 	std::ifstream in(path);
 
 	if (!in.good())
@@ -48,4 +48,13 @@ void config::load(const std::string name) {
 	//test
 
 	in.close();
+}
+
+void config::del(std::string name) {
+	const auto path = directory_path + "/" + name;
+
+	if (!std::filesystem::exists(path))
+		return;
+
+	std::filesystem::remove(path.c_str());
 }

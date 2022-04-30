@@ -128,7 +128,6 @@
     <ClInclude Include="core\menu\config\config.hpp" />
     <ClInclude Include="core\menu\menu.hpp" />
     <ClInclude Include="core\menu\config\cheat_var.hpp" />
-    <ClInclude Include="dependencies\font\droid.hpp" />
     <ClInclude Include="dependencies\imgui\freetype\config\ftconfig.h" />
     <ClInclude Include="dependencies\imgui\freetype\config\ftheader.h" />
     <ClInclude Include="dependencies\imgui\freetype\config\ftmodule.h" />
@@ -231,6 +230,7 @@
     <ClInclude Include="dependencies\math\math.hpp" />
     <ClInclude Include="dependencies\resources\avatar_ct.h" />
     <ClInclude Include="dependencies\resources\avatar_tt.h" />
+    <ClInclude Include="dependencies\resources\font\memory_font.hpp" />
     <ClInclude Include="dependencies\resources\Resource.h" />
     <ClInclude Include="dependencies\resources\Shaders\Build\Debug\blur_x.h" />
     <ClInclude Include="dependencies\resources\Shaders\Build\Debug\blur_y.h" />

@@ -16,6 +16,24 @@ auto tool_tip = [&](const std::string& string) {
         menu::widgets::tool_tips.emplace_back(string);
 };
 
+void ReadDirectory(const std::string& name, std::vector<std::string>& v)
+{
+    auto pattern(name);
+    if (!std::filesystem::exists(name))
+        return;
+    pattern.append("\\*.json");
+    WIN32_FIND_DATAA data;
+    HANDLE hFind;
+    if ((hFind = FindFirstFileA(pattern.c_str(), &data)) != INVALID_HANDLE_VALUE)
+    {
+        do
+        {
+            v.emplace_back(data.cFileName);
+        } while (FindNextFileA(hFind, &data) != 0);
+        FindClose(hFind);
+    }
+}
+
 std::vector<menu::settings::weapon_name_t> weapon_names = {
     { item_definition_indexes::WEAPON_AK47, "ak-47" },
     { item_definition_indexes::WEAPON_AUG, "aug" },
@@ -63,17 +81,19 @@ void menu::initialize() {
     io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
     
 
-    menu::settings::tahoma = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
-        Droid_compressed_data,
-        Droid_compressed_size,
-        14.f);
-    menu::settings::tahoma2 = menu::settings::tahoma = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
-        Droid_compressed_data,
-        Droid_compressed_size,
-        16.f);
-    menu::settings::tahoma3 = menu::settings::tahoma = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
-        Droid_compressed_data,
-        Droid_compressed_size,
+    menu::settings::menu_font_12 = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
+        proggy_compressed_data,
+        proggy_compressed_size,
+        12.f);
+
+    menu::settings::menu_font_14 = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
+        proggy_compressed_data,
+        proggy_compressed_size,
+        12.f);
+
+    menu::settings::menu_font_16 = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
+        proggy_compressed_data,
+        proggy_compressed_size,
         12.f);
 }
 
@@ -187,7 +207,20 @@ void menu::render() {
         P2.y += CurrentWindowPos.y;
         pDrawList = pForegroundDrawList;
         pDrawList->AddRect(P1, P2, ImColor(0.25f, 0.25f, 0.25f, 1.000f), 0.000f);
+        //Cool line
+        P1 = ImVec2(0.000f, 0.000f);
+        P1.x += CurrentWindowPos.x;
+        P1.y += CurrentWindowPos.y;
+        P2 = ImVec2(menu::settings::width, 4.f);
+        P2.x += CurrentWindowPos.x;
+        P2.y += CurrentWindowPos.y;
+        pDrawList = pForegroundDrawList;
+        pDrawList->AddRectFilledMultiColor(P1, P2, ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], 255.f),
+            ImColor(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], 255.f),
+            ImColor(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], 255.f),
+            ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], 255.f));
         //Main Tab
+        ImGui::PushFont(menu::settings::menu_font_14);
         ImGui::SetCursorPos(ImVec2(8.000f, 20.000f));
         if (ImGui::Tab("Rage", "", { 85.000f, 0.000f }, current_tab == 0 ? true : false)) {
             current_tab = 0;
@@ -223,6 +256,7 @@ void menu::render() {
             current_tab = 5;
             update_animation_alpha();
         }
+        ImGui::PopFont();
         //Inside tab setup
         if (current_tab == 0) {
             tabs::rage();
@@ -267,18 +301,19 @@ void menu::tabs::misc() {
 }
 
 void menu::tabs::settings() {
-    static int config_tab = 0;
     static const char* configs[] = { "1", "2", "3", "4", "5" };
     static const char* choices[]{ "  yes", "  no" };
     static int current_config = 0;
 
     ImGui::SetCursorPos({ CHILD_FIRST_POS });
-    ImGui::BeginChild("Config", { CHILD_SIZE });
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
-    ImGui::PushFont(menu::settings::tahoma3);
+    ImGui::BeginChild("Config", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
 
-    ImGui::Combo(("configuration"), &current_config, configs, IM_ARRAYSIZE(configs));
+    ImGui::ColorEdit3("Menu Color", variables::menu_clr);
+    ImGui::Spacing();
+    ImGui::Spacing();
 
+    ImGui::Combo(("##config"), &current_config, configs, IM_ARRAYSIZE(configs));
     if (ImGui::Button(("save"))) {
         ImGui::OpenPopup(("config save popup"));
     }
@@ -316,22 +351,21 @@ void menu::tabs::settings() {
     }
 
     if (ImGui::Button(("open configuration folder")))
-        ShellExecuteW(0, L"open", L"C:/csgo_base/configs", NULL, NULL, SW_NORMAL);
-
-    ImGui::Spacing();
-    ImGui::SliderInt("Slider 1", &variables::test_int, 0, 100);
+        ShellExecuteW(0, L"open", L"C:/csgo_cheat/configs", NULL, NULL, SW_NORMAL);
 
     ImGui::PopFont();
     ImGui::EndChild();
     //2nd Child
     ImGui::SetCursorPos({ CHILD_SECOND_POS });
-    ImGui::BeginChild("Info", { CHILD_SIZE });
+    ImGui::BeginChild("Info", { CHILD_SIZE }, true);
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
-    ImGui::PushFont(menu::settings::tahoma3);
+    ImGui::PushFont(menu::settings::menu_font_12);
 
     ImGui::Text(("compilation date: " __DATE__ " - " __TIME__));
     ImGui::Text(std::strstr(GetCommandLineA(), "-insecure") ? ("insecure parameter found, VAC disabled!") : ("[WARNING] insecure parameter not found make sure you injected with VAC bypass!"));
+
+    ImGui::Text("Application average %.3f ms/frame", 1000.0f / ImGui::GetIO().Framerate);
+    ImGui::Text("FPS:%.1f", ImGui::GetIO().Framerate);
 
     ImGui::PopFont();
     ImGui::EndChild();

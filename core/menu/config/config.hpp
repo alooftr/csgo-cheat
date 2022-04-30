@@ -9,6 +9,7 @@ namespace config {
 	void initialize();
 	void load(const std::string name);
 	void save(const std::string name);
+	void del(const std::string name);
 
 	inline std::string directory_path;
 }

@@ -130,7 +130,7 @@ LRESULT __stdcall hooks::wndproc(HWND hwnd, UINT message, WPARAM wparam, LPARAM 
 }
 
 std::once_flag flag;
-long __stdcall hooks::present::hook(IDirect3DDevice9* device, RECT* source_rect, RECT* dest_rect, HWND dest_window_override, RGNDATA* dirty_region) {
+static HRESULT D3DAPI hooks::present::hook(IDirect3DDevice9* device, RECT* source_rect, RECT* dest_rect, HWND dest_window_override, RGNDATA* dirty_region) {
 	std::call_once(flag, [&] { menu::initialize(); });
 
 	static bool init_imgui{ ImGui_ImplDX9_Init(device) };
@@ -139,17 +139,18 @@ long __stdcall hooks::present::hook(IDirect3DDevice9* device, RECT* source_rect,
 	IDirect3DVertexDeclaration9* vertexDeclaration;
 	device->GetVertexDeclaration(&vertexDeclaration);
 
-	post_processing::set_device(device);
-	post_processing::new_frame();
-
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
+	post_processing::set_device(device);
+	post_processing::new_frame();
+
 	menu::render();
 	if (!menu::settings::open){
 		menu::settings::alpha = 0;
-		alpha = 0;
+		alpha = std::clamp(alpha - (animation_frequency * ImGui::GetIO().DeltaTime) * 2, 0.f, 1.f);
+		post_processing::perform_fullscreen_blur(ImGui::GetBackgroundDrawList(), alpha);
 	}
 	else {
 		post_processing::perform_fullscreen_blur(ImGui::GetBackgroundDrawList(), alpha);
@@ -157,8 +158,11 @@ long __stdcall hooks::present::hook(IDirect3DDevice9* device, RECT* source_rect,
 
 	ImGui::EndFrame();
 	ImGui::Render();
-	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
+	if (device->BeginScene() == D3D_OK) {
+		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+		device->EndScene();
+	}
 	device->SetVertexDeclaration(vertexDeclaration);
 	vertexDeclaration->Release();
 
