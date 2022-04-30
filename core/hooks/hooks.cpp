@@ -196,12 +196,15 @@ bool __stdcall hooks::create_move::hook(float input_sample_frametime, c_usercmd*
 	auto old_viewangles = cmd->viewangles;
 	auto old_forwardmove = cmd->forwardmove;
 	auto old_sidemove = cmd->sidemove;
+	auto backup_flags = csgo::local_player->flags();
 
 	misc::movement::bunny_hop(cmd);
 
 	prediction::start(cmd); {
 
 	} prediction::end();
+
+	misc::movement::edge_jump(cmd, backup_flags);
 
 	math::correct_movement(old_viewangles, cmd, old_forwardmove, old_sidemove);
 

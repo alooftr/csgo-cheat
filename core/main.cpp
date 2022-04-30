@@ -20,7 +20,7 @@ unsigned long WINAPI initialize(void* instance) {
 		console::push_color(FOREGROUND_INTENSE_MAGENTA);
 		console::log("[info]", "csgo-cheat - build date: %s / %s", __DATE__, __TIME__);
 		console::pop_color();
-		interfaces::console->console_color_printf(Color(255, 0, 205, 255), "csgo-cheat - build date: %s / %s\n", __DATE__, __TIME__);
+		interfaces::console->console_color_printf(Color((int)(variables::menu_clr[0] * 255), (int)(variables::menu_clr[1] * 255), (int)(variables::menu_clr[2] * 255), 255), "[csgo-cheat] - build date: %s / %s\n", __DATE__, __TIME__);
 	}
 
 	catch (const std::runtime_error & error) {

@@ -64,19 +64,19 @@ void menu::initialize() {
     
 
     menu::settings::menu_font_12 = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
-        proggy_compressed_data,
-        proggy_compressed_size,
+        roboto_medium_compressed_data,
+        roboto_medium_compressed_size,
         12.f);
 
     menu::settings::menu_font_14 = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
-        proggy_compressed_data,
-        proggy_compressed_size,
-        12.f);
+        roboto_medium_compressed_data,
+        roboto_medium_compressed_size,
+        14.f);
 
     menu::settings::menu_font_16 = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
-        proggy_compressed_data,
-        proggy_compressed_size,
-        12.f);
+        roboto_medium_compressed_data,
+        roboto_medium_compressed_size,
+        16.f);
 }
 
 void menu::widgets::current_weapon_button(float width) {
@@ -266,20 +266,85 @@ void menu::render() {
 }
 
 void menu::tabs::rage() {
+    ImGui::SetCursorPos({ CHILD_FIRST_POS });
+    ImGui::BeginChild("Child 1", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
 
+    ImGui::PopFont();
+    ImGui::EndChild();
+
+    ImGui::SetCursorPos({ CHILD_SECOND_POS });
+    ImGui::BeginChild("Child 2", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
+
+    ImGui::PopFont();
+    ImGui::EndChild();
 }
 
 void menu::tabs::anti_aim() {
+    ImGui::SetCursorPos({ CHILD_FIRST_POS });
+    ImGui::BeginChild("Child 1", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
 
+    ImGui::PopFont();
+    ImGui::EndChild();
+
+    ImGui::SetCursorPos({ CHILD_SECOND_POS });
+    ImGui::BeginChild("Child 2", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
+
+    ImGui::PopFont();
+    ImGui::EndChild();
 }
 void menu::tabs::legit() {
+    ImGui::SetCursorPos({ CHILD_FIRST_POS });
+    ImGui::BeginChild("Child 1", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
 
+    ImGui::PopFont();
+    ImGui::EndChild();
+
+    ImGui::SetCursorPos({ CHILD_SECOND_POS });
+    ImGui::BeginChild("Child 2", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
+
+    ImGui::PopFont();
+    ImGui::EndChild();
 }
 void menu::tabs::visuals() {
+    ImGui::SetCursorPos({ CHILD_FIRST_POS });
+    ImGui::BeginChild("Child 1", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
 
+    ImGui::PopFont();
+    ImGui::EndChild();
+
+    ImGui::SetCursorPos({ CHILD_SECOND_POS });
+    ImGui::BeginChild("Child 2", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
+
+    ImGui::PopFont();
+    ImGui::EndChild();
 }
 void menu::tabs::misc() {
+    ImGui::SetCursorPos({ CHILD_FIRST_POS });
+    ImGui::BeginChild("Movement", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
 
+    ImGui::Checkbox("Auto Bhop##abhop", &variables::movement::bunny_hop);
+    ImGui::Checkbox("Edge jump#ejump", &variables::movement::edge_jump);
+    if (variables::movement::edge_jump)
+        ImGui::HotKey(&variables::movement::edge_jump_key, ImVec2(195.f, 20));
+
+    ImGui::PopFont();
+    ImGui::EndChild();
+
+    ImGui::SetCursorPos({ CHILD_SECOND_POS });
+    ImGui::BeginChild("Miscellaneous", { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
+
+    ImGui::PopFont();
+    ImGui::EndChild();
 }
 
 void menu::tabs::settings() {
@@ -340,7 +405,6 @@ void menu::tabs::settings() {
     //2nd Child
     ImGui::SetCursorPos({ CHILD_SECOND_POS });
     ImGui::BeginChild("Info", { CHILD_SIZE }, true);
-
     ImGui::PushFont(menu::settings::menu_font_12);
 
     ImGui::Text(("compilation date: " __DATE__ " - " __TIME__));
