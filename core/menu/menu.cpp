@@ -16,24 +16,6 @@ auto tool_tip = [&](const std::string& string) {
         menu::widgets::tool_tips.emplace_back(string);
 };
 
-void ReadDirectory(const std::string& name, std::vector<std::string>& v)
-{
-    auto pattern(name);
-    if (!std::filesystem::exists(name))
-        return;
-    pattern.append("\\*.json");
-    WIN32_FIND_DATAA data;
-    HANDLE hFind;
-    if ((hFind = FindFirstFileA(pattern.c_str(), &data)) != INVALID_HANDLE_VALUE)
-    {
-        do
-        {
-            v.emplace_back(data.cFileName);
-        } while (FindNextFileA(hFind, &data) != 0);
-        FindClose(hFind);
-    }
-}
-
 std::vector<menu::settings::weapon_name_t> weapon_names = {
     { item_definition_indexes::WEAPON_AK47, "ak-47" },
     { item_definition_indexes::WEAPON_AUG, "aug" },
