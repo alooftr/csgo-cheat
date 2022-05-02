@@ -5,10 +5,15 @@
 namespace misc {
 	namespace movement {
 		void bunny_hop(c_usercmd* cmd);
-		void edge_jump(c_usercmd* cmd, int backup_flags);
-		void edge_bug(c_usercmd* cmd, int backup_flags);
-		void jump_bug(c_usercmd* cmd, int backup_flags);
+		void edge_jump(c_usercmd* cmd, int old_flags);
+		void edge_bug(c_usercmd* cmd, int old_flags);
+		void jump_bug(c_usercmd* cmd, int old_flags);
 		void infinite_crouch(c_usercmd* cmd);
+		void mouse_delta(c_usercmd* cmd);
+		void null_strafe(c_usercmd* cmd);
+		void strafe_optimizer(c_usercmd* cmd);
+		void mini_jump(c_usercmd* cmd);
+
 	};
 }
 

@@ -87,6 +87,11 @@ public:
 
 class player_prediction {
 public:
+	void update(int start_frame, bool is_valid_frame, int incoming_command, int outcoming_command) {
+		typedef void(__thiscall* o_update)(void*, int, bool, int, int);
+		return utilities::call_virtual<o_update>(this, 3)(this, start_frame, is_valid_frame, incoming_command, outcoming_command);
+	}
+
 	bool in_prediction() {
 		typedef bool( __thiscall *o_in_prediction )( void * );
 		return utilities::call_virtual<o_in_prediction>( this, 14 )( this );

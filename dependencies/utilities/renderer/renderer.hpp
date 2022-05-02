@@ -39,6 +39,8 @@ namespace render {
 
 
 	namespace fonts {
-		extern unsigned long menu_font;
+		extern unsigned long indicator_font;
+		extern unsigned long esp_font;
+		extern unsigned long esp_flags_font;
 	}
 }

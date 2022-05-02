@@ -812,6 +812,8 @@ CODE
 #endif
 
 #include "imgui.h"
+#include "../../core/menu/config/cheat_var.hpp"
+
 #ifndef IMGUI_DISABLE
 
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
@@ -5176,6 +5178,9 @@ bool ImGui::BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, b
     // While this is not really documented/defined, it seems that the expected thing to do.
     if (child_window->BeginCount == 1)
         parent_window->DC.CursorPos = child_window->Pos;
+
+    //text
+    parent_window->DrawList->AddText({ ImGui::GetWindowPos().x ,ImGui::GetWindowPos().y - 10 }, ImColor(1.f, 1.f, 1.f, ImGui::GetStyle().Alpha), name);
 
     // Process navigation-in immediately so NavInit can run on first frame
     if (g.NavActivateId == id && !(flags & ImGuiWindowFlags_NavFlattened) && (child_window->DC.NavLayersActiveMask != 0 || child_window->DC.NavHasScroll))

@@ -30,13 +30,13 @@ namespace console {
 		t = time(NULL);
 		struct tm tm = *localtime(&t);
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSE_GREEN);
-		printf("[%2d:%2d:%2d] ", tm.tm_hour, tm.tm_min, tm.tm_sec);
+		printf(xor("[%2d:%2d:%2d] "), tm.tm_hour, tm.tm_min, tm.tm_sec);
 
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSE_CYAN);
 		printf(title);
 
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), wConsoleColor);
-		printf(" --> ");
+		printf(xor(" --> "));
 		printf(format, args ...);
 		printf("\n");
 #endif

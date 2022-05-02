@@ -1168,7 +1168,8 @@ bool ImGui::Checkbox(const char* label, bool* v)
             hovered ? GetColorU32(ImVec4(variables::menu_clr[2] + 20.f / 255.f, variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, alpha)) 
             : GetColorU32(ImVec4(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], alpha)),
             //bot right
-            hovered ? GetColorU32(ImVec4(variables::menu_clr[2] + 20.f / 255.f, variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, alpha)) 
+            hovered ? GetColorU32(ImVec4(variables::menu_clr[2] + 20.f / 255.f, variables::
+            [0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, alpha)) 
             : GetColorU32(ImVec4(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], alpha)));
             //bot left
         */
@@ -1693,22 +1694,161 @@ static const int KeyCodes[] = {
     0xA4,
     0xA5
 };
-void ImGui::HotKey(int* k, const ImVec2& size_arg) {
-    static bool waitingforkey = false;
-    if (waitingforkey == false) {
-        if (ImGui::Button(KeyNames[*(int*)k], size_arg))
-            waitingforkey = true;
+
+bool ImGui::FocusableItemRegister(ImGuiWindow* window, ImGuiID id) {
+    ImGuiContext& g = *GImGui;
+
+    // Increment counters
+    const bool is_tab_stop = (g.CurrentItemFlags & (ImGuiItemFlags_NoTabStop | ImGuiItemFlags_Disabled)) == 0;
+    window->DC.FocusCounterRegular++;
+    if (is_tab_stop)
+        window->DC.FocusCounterTabStop++;
+
+    // Process TAB/Shift-TAB to tab *OUT* of the currently focused item.
+    // (Note that we can always TAB out of a widget that doesn't allow tabbing in)
+    if (g.ActiveId == id && g.FocusTabPressed && !IsActiveIdUsingKey(ImGuiKey_Tab) && g.FocusRequestNextWindow == NULL)
+    {
+        g.FocusRequestNextWindow = window;
+        g.FocusRequestNextCounterTabStop = window->DC.FocusCounterTabStop + (g.IO.KeyShift ? (is_tab_stop ? -1 : 0) : +1); // Modulo on index will be applied at the end of frame once we've got the total counter of items.
     }
-    else if (waitingforkey == true) {
-        ImGui::Button("Waiting", size_arg);
-        for (auto& Key : KeyCodes)
+
+    // Handle focus requests
+    if (g.FocusRequestCurrWindow == window)
+    {
+        if (window->DC.FocusCounterRegular == g.FocusRequestCurrCounterRegular)
+            return true;
+        if (is_tab_stop && window->DC.FocusCounterTabStop == g.FocusRequestCurrCounterTabStop)
         {
-            if (GetAsyncKeyState(Key)) {
-                *(int*)k = Key;
-                waitingforkey = false;
+            g.NavActivateId = id;
+            return true;
+        }
+
+        // If another item is about to be focused, we clear our own active id
+        if (g.ActiveId == id)
+            ClearActiveID();
+    }
+
+    return false;
+}
+
+bool ImGui::Hotkey(const char* label, int* k, const ImVec2& size_arg) {
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    ImGuiContext& g = *GImGui;
+    ImGuiIO& io = g.IO;
+    const ImGuiStyle& style = g.Style;
+
+    const ImGuiID id = window->GetID(label);
+    const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+    ImVec2 size = ImGui::CalcItemSize(size_arg, ImGui::CalcItemWidth(), label_size.y + style.FramePadding.y * 2.0f);
+    const ImRect frame_bb(window->DC.CursorPos + ImVec2(label_size.x + style.ItemInnerSpacing.x, 0.0f), window->DC.CursorPos + size);
+    const ImRect total_bb(window->DC.CursorPos, frame_bb.Max);
+
+    ImGui::ItemSize(total_bb, style.FramePadding.y);
+    if (!ImGui::ItemAdd(total_bb, id))
+        return false;
+
+    const bool focus_requested = FocusableItemRegister(window, id);
+    const bool focus_requested_by_code = focus_requested && (g.FocusRequestCurrWindow == window && g.FocusRequestCurrCounterRegular == window->DC.FocusCounterRegular);
+    const bool focus_requested_by_tab = focus_requested && !focus_requested_by_code;
+
+    const bool hovered = ImGui::ItemHoverable(frame_bb, id);
+
+    if (hovered) {
+        ImGui::SetHoveredID(id);
+        g.MouseCursor = ImGuiMouseCursor_TextInput;
+    }
+
+    const bool user_clicked = hovered && io.MouseClicked[0];
+
+    if (focus_requested || user_clicked) {
+        if (g.ActiveId != id) {
+            // Start edition
+            memset(io.MouseDown, 0, sizeof(io.MouseDown));
+            memset(io.KeysDown, 0, sizeof(io.KeysDown));
+            *k = 0;
+        }
+        ImGui::SetActiveID(id, window);
+        ImGui::FocusWindow(window);
+    }
+    else if (io.MouseClicked[0]) {
+        // Release focus when we click outside
+        if (g.ActiveId == id)
+            ImGui::ClearActiveID();
+    }
+
+    bool value_changed = false;
+    int key = *k;
+
+    if (g.ActiveId == id) {
+        for (auto i = 0; i < 5; i++) {
+            if (io.MouseDown[i]) {
+                switch (i) {
+                case 0:
+                    key = VK_LBUTTON;
+                    break;
+                case 1:
+                    key = VK_RBUTTON;
+                    break;
+                case 2:
+                    key = VK_MBUTTON;
+                    break;
+                case 3:
+                    key = VK_XBUTTON1;
+                    break;
+                case 4:
+                    key = VK_XBUTTON2;
+                    break;
+                }
+                value_changed = true;
+                ImGui::ClearActiveID();
             }
         }
+        if (!value_changed) {
+            for (auto i = VK_BACK; i <= VK_RMENU; i++) {
+                if (io.KeysDown[i]) {
+                    key = i;
+                    value_changed = true;
+                    ImGui::ClearActiveID();
+                }
+            }
+        }
+
+        if (IsKeyPressedMap(ImGuiKey_Escape)) {
+            *k = 0;
+            ImGui::ClearActiveID();
+        }
+        else {
+            *k = key;
+        }
     }
+
+    // Render
+    // Select which buffer we are going to display. When ImGuiInputTextFlags_NoLiveEdit is Set 'buf' might still be the old value. We Set buf to NULL to prevent accidental usage from now on.
+
+    char buf_display[64] = "None";
+
+    ImGui::RenderFrame(frame_bb.Min, frame_bb.Max, ImGui::GetColorU32(ImVec4(0.20f, 0.25f, 0.30f, 1.0f)), true, style.FrameRounding);
+
+    if (*k != 0 && g.ActiveId != id) {
+        strcpy_s(buf_display, KeyNames[*k]);
+    }
+    else if (g.ActiveId == id) {
+        strcpy_s(buf_display, "<Press a key>");
+    }
+
+    const ImRect clip_rect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + size.x, frame_bb.Min.y + size.y); // Not using frame_bb.Max because we have adjusted size
+    ImVec2 render_pos = frame_bb.Min + style.FramePadding;
+    ImGui::RenderTextClipped(frame_bb.Min + style.FramePadding, frame_bb.Max - style.FramePadding, buf_display, NULL, NULL, style.ButtonTextAlign, &clip_rect);
+    //RenderTextClipped(frame_bb.Min + style.FramePadding, frame_bb.Max - style.FramePadding, buf_display, NULL, NULL, GetColorU32(ImGuiCol_Text), style.ButtonTextAlign, &clip_rect);
+    //draw_window->DrawList->AddText(g.Font, g.FontSize, render_pos, GetColorU32(ImGuiCol_Text), buf_display, NULL, 0.0f, &clip_rect);
+
+    if (label_size.x > 0)
+        ImGui::RenderText(ImVec2(total_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), label);
+
+    return value_changed;
 }
 
 //-------------------------------------------------------------------------
@@ -6151,7 +6291,7 @@ void ImGui::ColorPickerOptionsPopup(const float* ref_col, ImGuiColorEditFlags fl
     }
     EndPopup();
 }
-bool ImGui::TabEx(const char* label, const char* icon, const bool selected, const ImVec2& size_arg)
+bool ImGui::TabEx(const char* label, const bool selected, const ImVec2& size_arg)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -6177,19 +6317,19 @@ bool ImGui::TabEx(const char* label, const char* icon, const bool selected, cons
 
     if (selected)
         window->DrawList->AddRectFilled({ bb.Min.x + 20,bb.Max.y - 7 }, { bb.Max.x - 20,bb.Max.y - 5 }, selected ? ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha) : ImColor(255, 255, 255, 255), 6);
-
+     
     window->DrawList->AddText(ImVec2(bb.Min.x + size_arg.x / 2 - ImGui::CalcTextSize(label).x / 2, bb.Min.y + size_arg.y / 2 - ImGui::CalcTextSize(label).y / 2), selected ? ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha) : ImColor(255, 255, 255, 255), label);
 
     return pressed;
 }
 
-bool ImGui::Tab(const char* label, const char* icon, const ImVec2& size_arg, const bool selected)
+bool ImGui::Tab(const char* label, const ImVec2& size_arg, const bool selected)
 {
-    return TabEx(label, icon, selected, size_arg);
+    return TabEx(label, selected, size_arg);
 }
 
 
-bool ImGui::SubTabEx(const char* label, const char* icon, const bool selected, const ImVec2& size_arg)
+bool ImGui::SubTabEx(const char* label, const bool selected, const ImVec2& size_arg)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -6217,9 +6357,9 @@ bool ImGui::SubTabEx(const char* label, const char* icon, const bool selected, c
     return pressed;
 }
 
-bool ImGui::SubTab(const char* label, const char* icon, const ImVec2& size_arg, const bool selected)
+bool ImGui::SubTab(const char* label, const ImVec2& size_arg, const bool selected)
 {
-    return SubTabEx(label, icon, selected, size_arg);
+    return SubTabEx(label, selected, size_arg);
 }
 
 bool ImGui::MultiCombo(const char* name, const char** displayName, bool* data, int dataSize) {

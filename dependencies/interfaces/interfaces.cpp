@@ -62,7 +62,7 @@ static std::uintptr_t findPattern(const char* moduleName, std::string_view patte
 	}
 
 	if (reportNotFound)
-		MessageBoxA(NULL, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "Osiris", MB_OK | MB_ICONWARNING);
+		MessageBoxA(NULL, ("Failed to find pattern #" + std::to_string(id) + '!').c_str(), "csgo-cheat", MB_OK | MB_ICONWARNING);
 	return 0;
 }
 
@@ -147,7 +147,7 @@ bool interfaces::initialize() {
 			console::log("[interfaces]" ,"key_values_system found at %p", key_values_system);
 	}
 	/*custom interfaces*/
-	client_mode = **reinterpret_cast<i_client_mode * **>((*reinterpret_cast<uintptr_t * *>(client))[10] + 5);
+	client_mode = **reinterpret_cast<i_client_mode ***>((*reinterpret_cast<uintptr_t * *>(client))[10] + 5);
 	if (client_mode)
 		console::log("[custom interfaces]" ,"client_mode found at %p", client_mode);
 

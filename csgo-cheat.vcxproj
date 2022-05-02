@@ -238,6 +238,7 @@
     <ClInclude Include="dependencies\resources\Shaders\Build\Debug\default_vs.h" />
     <ClInclude Include="dependencies\resources\Shaders\Build\Debug\monochrome.h" />
     <ClInclude Include="dependencies\resources\skillgroups.h" />
+    <ClInclude Include="dependencies\resources\xorstr.hpp" />
     <ClInclude Include="dependencies\utilities\console\console.hpp" />
     <ClInclude Include="dependencies\utilities\fnv.hpp" />
     <ClInclude Include="dependencies\utilities\json\json.hpp" />

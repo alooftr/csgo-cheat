@@ -1,11 +1,16 @@
 #include "renderer.hpp"
 
-unsigned long render::fonts::menu_font;
+unsigned long render::fonts::indicator_font;
+unsigned long render::fonts::esp_font;
+unsigned long render::fonts::esp_flags_font;
 
 void render::initialize() {
-	render::fonts::menu_font = interfaces::surface->font_create();
+	render::fonts::indicator_font = render::fonts::esp_font = render::fonts::esp_flags_font = interfaces::surface->font_create();
 
-	interfaces::surface->set_font_glyph(render::fonts::menu_font, "Tahoma", 12, 500, 0, 0, font_flags::fontflag_outline);
+	interfaces::surface->set_font_glyph(render::fonts::indicator_font, "Verdanab", 16, 500, 0, 0, font_flags::fontflag_outline);
+	interfaces::surface->set_font_glyph(render::fonts::esp_font, "Tahoma", 14, 500, 0, 0, font_flags::fontflag_outline);
+	interfaces::surface->set_font_glyph(render::fonts::esp_flags_font, "pixelfont", 12, 500, 0, 0, font_flags::fontflag_outline);
+
 
 	console::log("[info]", "render initialized!");
 }

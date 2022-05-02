@@ -16,91 +16,83 @@ bool hooks::initialize() {
 	const auto create_move_target = reinterpret_cast<void*>(get_virtual(interfaces::client_mode, create_move::index));
 	const auto paint_traverse_target = reinterpret_cast<void*>(get_virtual(interfaces::panel, paint_traverse::index));
 	const auto on_screen_size_changed_target = reinterpret_cast<void*>(get_virtual(interfaces::surface, on_screen_size_changed::index));
-	auto override_view_target = reinterpret_cast<void*>(get_virtual(interfaces::client_mode, override_view::index));
-	auto draw_model_execute_target = reinterpret_cast<void*>(get_virtual(interfaces::model_render, draw_model_execute::index));
-	auto frame_stage_notify_target = reinterpret_cast<void*>(get_virtual(interfaces::client, frame_stage_notify::index));
-	auto sv_cheats_get_bool_target = reinterpret_cast<void*>(get_virtual(interfaces::console->get_convar("sv_cheats"), sv_cheats_get_bool::index));
-	auto do_post_screen_effects_target = reinterpret_cast<void*>(get_virtual(interfaces::client_mode, do_post_screen_effects::index));
-	auto get_color_modulation_target = reinterpret_cast<void*>(utilities::pattern_scan("materialsystem.dll", "55 8B EC 83 EC ? 56 8B F1 8A 46"));
-	auto list_leaves_in_box_target = reinterpret_cast<void*>(get_virtual(interfaces::engine->get_bsp_query(), list_leaves_in_box::index));
-	auto is_using_static_prop_debug_modes_target = reinterpret_cast<void*>(utilities::pattern_scan("engine.dll", "8B 0D ? ? ? ? 81 F9 ? ? ? ? 75 ? A1 ? ? ? ? 35 ? ? ? ? EB ? 8B 01 FF 50 ? 83 F8 ? 0F 85 ? ? ? ? 8B 0D"));
-	auto is_depth_of_field_enabled_target = reinterpret_cast<void*>(interfaces::is_depth_of_field_enabled);
+	const auto override_view_target = reinterpret_cast<void*>(get_virtual(interfaces::client_mode, override_view::index));
+	const auto draw_model_execute_target = reinterpret_cast<void*>(get_virtual(interfaces::model_render, draw_model_execute::index));
+	const auto frame_stage_notify_target = reinterpret_cast<void*>(get_virtual(interfaces::client, frame_stage_notify::index));
+	const auto sv_cheats_get_bool_target = reinterpret_cast<void*>(get_virtual(interfaces::console->get_convar(xor("sv_cheats")), sv_cheats_get_bool::index));
+	const auto do_post_screen_effects_target = reinterpret_cast<void*>(get_virtual(interfaces::client_mode, do_post_screen_effects::index));
+	const auto get_color_modulation_target = reinterpret_cast<void*>(utilities::pattern_scan(xor("materialsystem.dll"), xor ("55 8B EC 83 EC ? 56 8B F1 8A 46")));
+	const auto list_leaves_in_box_target = reinterpret_cast<void*>(get_virtual(interfaces::engine->get_bsp_query(), list_leaves_in_box::index));
+	const auto is_using_static_prop_debug_modes_target = reinterpret_cast<void*>(utilities::pattern_scan(xor("engine.dll"), xor("8B 0D ? ? ? ? 81 F9 ? ? ? ? 75 ? A1 ? ? ? ? 35 ? ? ? ? EB ? 8B 01 FF 50 ? 83 F8 ? 0F 85 ? ? ? ? 8B 0D")));
+	const auto is_depth_of_field_enabled_target = reinterpret_cast<void*>(interfaces::is_depth_of_field_enabled);
 	const auto alloc_key_value_memory_target = reinterpret_cast<void*>(get_virtual(interfaces::key_values_system, alloc_key_value_memory::index));
-	const auto check_file_CRCs_with_server = reinterpret_cast<void*>(utilities::pattern_scan("engine.dll", "55 8B EC 81 EC ? ? ? ? 53 8B D9 89 5D F8 80"));
+	const auto check_file_CRCs_with_server = reinterpret_cast<void*>(utilities::pattern_scan(xor("engine.dll"), xor("55 8B EC 81 EC ? ? ? ? 53 8B D9 89 5D F8 80")));
 	const auto loose_file_allowed_target = reinterpret_cast<void*>(get_virtual(interfaces::file_system, loose_file_allowed::index));
 	const auto get_unverified_file_hashes_target = reinterpret_cast<void*>(get_virtual(interfaces::file_system, get_unverified_file_hashes::index));
 
 	if (MH_Initialize() != MH_OK)
-		throw std::runtime_error("failed to initialize MH_Initialize.");
+		throw std::runtime_error(xor("failed to initialize MH_Initialize."));
 
 	if (MH_CreateHook(present_target, &present::hook, reinterpret_cast<void**>(&present::original)) != MH_OK) 
-		throw std::runtime_error(("failed to initialize present."));
+		throw std::runtime_error(xor("failed to initialize present."));
 
 	if (MH_CreateHook(reset_target, &reset::hook, reinterpret_cast<void**>(&reset::original)) != MH_OK) 
-		throw std::runtime_error(("failed to initialize reset."));
+		throw std::runtime_error(xor("failed to initialize reset."));
 
 	if (MH_CreateHook(create_move_target, &create_move::hook, reinterpret_cast<void**>(&create_move::original)) != MH_OK)
-		throw std::runtime_error("failed to initialize create_move.");
+		throw std::runtime_error(xor("failed to initialize create_move."));
 
 	if (MH_CreateHook(paint_traverse_target, &paint_traverse::hook, reinterpret_cast<void**>(&paint_traverse::original)) != MH_OK)
-		throw std::runtime_error("failed to initialize paint_traverse.");
+		throw std::runtime_error(xor("failed to initialize paint_traverse."));
 
 	if (MH_CreateHook(on_screen_size_changed_target, &on_screen_size_changed::hook, reinterpret_cast<void**>(&on_screen_size_changed::original)) != MH_OK)
-		throw std::runtime_error("failed to initialize on_screen_size_changed_target.");
+		throw std::runtime_error(xor("failed to initialize on_screen_size_changed_target."));
 
 	if (MH_CreateHook(draw_model_execute_target, &draw_model_execute::hook, reinterpret_cast<void**>(&hooks::draw_model_execute::original)) != MH_OK)
-		throw std::runtime_error(("failed to initialize draw_model_execute."));
+		throw std::runtime_error(xor("failed to initialize draw_model_execute."));
 
 	if (MH_CreateHook(override_view_target, &override_view::hook, reinterpret_cast<void**>(&override_view::original)) != MH_OK) 
-		throw std::runtime_error(("failed to initialize override_view."));
+		throw std::runtime_error(xor("failed to initialize override_view."));
 	
 	if (MH_CreateHook(frame_stage_notify_target, &frame_stage_notify::hook, reinterpret_cast<void**>(&frame_stage_notify::original)) != MH_OK) 
-		throw std::runtime_error(("failed to initialize frame_stage_notify."));
+		throw std::runtime_error(xor("failed to initialize frame_stage_notify."));
 
 	if (MH_CreateHook(sv_cheats_get_bool_target, &sv_cheats_get_bool::hook, reinterpret_cast<void**>(&sv_cheats_get_bool::original)) != MH_OK) 
-		throw std::runtime_error(("failed to initialize sv_cheats."));
+		throw std::runtime_error(xor("failed to initialize sv_cheats."));
 
-	if (MH_CreateHook(do_post_screen_effects_target, &hooks::do_post_screen_effects::hook, reinterpret_cast<void**>(&do_post_screen_effects::original)) != MH_OK) {
-		throw std::runtime_error(("failed to initialize do_post_screen_effects."));
-		return false;
-	}
+	if (MH_CreateHook(do_post_screen_effects_target, &hooks::do_post_screen_effects::hook, reinterpret_cast<void**>(&do_post_screen_effects::original)) != MH_OK) 
+		throw std::runtime_error(xor("failed to initialize do_post_screen_effects."));
 
-	if (MH_CreateHook(list_leaves_in_box_target, &hooks::list_leaves_in_box::hook, reinterpret_cast<void**>(&list_leaves_in_box::original)) != MH_OK) {
-		throw std::runtime_error(("failed to initialize list_leaves_in_box."));
-		return false;
-	}
+	if (MH_CreateHook(list_leaves_in_box_target, &hooks::list_leaves_in_box::hook, reinterpret_cast<void**>(&list_leaves_in_box::original)) != MH_OK) 
+		throw std::runtime_error(xor("failed to initialize list_leaves_in_box."));
 
-	if (MH_CreateHook(get_color_modulation_target, &hooks::get_color_modulation::hook, reinterpret_cast<void**>(&get_color_modulation::original)) != MH_OK) {
-		throw std::runtime_error(("failed to initialize get_color_modulation."));
-		return false;
-	}
+	if (MH_CreateHook(get_color_modulation_target, &hooks::get_color_modulation::hook, reinterpret_cast<void**>(&get_color_modulation::original)) != MH_OK) 
+		throw std::runtime_error(xor("failed to initialize get_color_modulation."));
 
-	if (MH_CreateHook(is_using_static_prop_debug_modes_target, &hooks::is_using_static_prop_debug_modes::hook, reinterpret_cast<void**>(&is_using_static_prop_debug_modes::original)) != MH_OK) {
-		throw std::runtime_error(("failed to initialize is_using_static_prop_debug_modes."));
-		return false;
-	}
+	if (MH_CreateHook(is_using_static_prop_debug_modes_target, &hooks::is_using_static_prop_debug_modes::hook, reinterpret_cast<void**>(&is_using_static_prop_debug_modes::original)) != MH_OK) 
+		throw std::runtime_error(xor("failed to initialize is_using_static_prop_debug_modes."));
 
 	if (MH_CreateHook(is_depth_of_field_enabled_target, &is_depth_of_field_enabled::hook, nullptr) != MH_OK)
-		throw std::runtime_error(("failed to initialize is_depth_of_field_enabled."));
+		throw std::runtime_error(xor("failed to initialize is_depth_of_field_enabled."));
 
 	if (MH_CreateHook(alloc_key_value_memory_target, &alloc_key_value_memory::hook, reinterpret_cast<void**>(&alloc_key_value_memory::original)) != MH_OK)
-		throw std::runtime_error("failed to initialize alloc_key_value_memory.");
+		throw std::runtime_error(xor("failed to initialize alloc_key_value_memory."));
 
 	if (MH_CreateHook(check_file_CRCs_with_server, &check_file_CRCs_with_server::hook, nullptr) != MH_OK)
-		throw std::runtime_error("failed to initialize check_file_CRCs_with_server.");
+		throw std::runtime_error(xor("failed to initialize check_file_CRCs_with_server."));
 
 	if (MH_CreateHook(loose_file_allowed_target, &loose_file_allowed::hook, nullptr) != MH_OK)
-		throw std::runtime_error("failed to initialize loose_file_allowed.");
+		throw std::runtime_error(xor("failed to initialize loose_file_allowed."));
 
 	if (MH_CreateHook(get_unverified_file_hashes_target, &get_unverified_file_hashes::hook, nullptr) != MH_OK)
-		throw std::runtime_error("failed to initialize loose_file_allowed.");
+		throw std::runtime_error(xor("failed to initialize loose_file_allowed."));
 
 	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
-		throw std::runtime_error("failed to enable hooks.");
+		throw std::runtime_error(xor("failed to enable hooks."));
 
-	window = FindWindowW((L"Valve001"), NULL);
+	window = FindWindowW(L"Valve001", NULL);
 	if (!window)
-		throw std::runtime_error(("failed to initialize game window."));
+		throw std::runtime_error(xor("failed to initialize game window."));
 
 	wndproc_original = reinterpret_cast<WNDPROC>(SetWindowLongW(window, GWL_WNDPROC, reinterpret_cast<LONG>(wndproc)));
 
@@ -191,20 +183,33 @@ bool __stdcall hooks::create_move::hook(float input_sample_frametime, c_usercmd*
 
 	uintptr_t* frame_pointer;
 	__asm mov frame_pointer, ebp;
-	bool& send_packet = *reinterpret_cast<bool*>(*frame_pointer - 0x1C);
+	bool& send_packet = *reinterpret_cast<bool*>(*frame_pointer - 0x34);
+
+	if (interfaces::client_state->delta_tick > 0)
+		interfaces::prediction->update(
+			interfaces::client_state->delta_tick, interfaces::client_state->delta_tick > 0,
+			interfaces::client_state->last_command_ack, interfaces::client_state->last_outgoing_command + interfaces::client_state->choked_commands
+		);
 
 	auto old_viewangles = cmd->viewangles;
 	auto old_forwardmove = cmd->forwardmove;
 	auto old_sidemove = cmd->sidemove;
-	auto backup_flags = csgo::local_player->flags();
+	auto old_flags = csgo::local_player->flags();
 
 	misc::movement::bunny_hop(cmd);
-
+	misc::movement::infinite_crouch(cmd);
+	misc::movement::null_strafe(cmd);
+	//misc::movement::pixel_surf(cmd);
 	prediction::start(cmd); {
+
 
 	} prediction::end();
 
-	misc::movement::edge_jump(cmd, backup_flags);
+	misc::movement::edge_jump(cmd, old_flags);
+	misc::movement::edge_bug(cmd, old_flags);
+	misc::movement::jump_bug(cmd, old_flags);
+	misc::movement::mini_jump(cmd);
+	misc::movement::strafe_optimizer(cmd);
 
 	math::correct_movement(old_viewangles, cmd, old_forwardmove, old_sidemove);
 
@@ -226,8 +231,12 @@ void __stdcall hooks::paint_traverse::hook(unsigned int panel, bool force_repain
 	switch (panel_to_draw) {
 	case fnv::hash("MatSystemTopPanel"):
 		//visuals::player::run();
-		
-
+		int w, h;
+		interfaces::engine->get_screen_size(w, h);
+		if (csgo::local_player && csgo::local_player->is_alive()) {
+			int vel = csgo::local_player->velocity().length_2d();
+			render::text(w / 2, h / 2 + 400, render::fonts::indicator_font, std::format("Vel: {}", vel), true, color(255, 255, 255, 255));
+		}
 		break;
 
 	case fnv::hash("FocusOverlayPanel"):
@@ -269,7 +278,7 @@ void __stdcall hooks::frame_stage_notify::hook(int frame_stage) {
 }
 
 bool __fastcall hooks::sv_cheats_get_bool::hook(PVOID convar, int edx) {
-	static auto cam_think = utilities::pattern_scan("client.dll", "85 C0 75 30 38 86");
+	static auto cam_think = utilities::pattern_scan(xor("client.dll"), sig_cam_think);
 
 	if (!convar)
 		return false;
@@ -288,7 +297,7 @@ int __stdcall hooks::do_post_screen_effects::hook(int value) {
 #define MAX_COORD_FLOAT ( 16384.0f )
 #define MIN_COORD_FLOAT ( -MAX_COORD_FLOAT )
 int __fastcall hooks::list_leaves_in_box::hook(void* bsp, void* edx, const vec3_t& mins, const vec3_t& maxs, unsigned short* list, int list_max) {
-	static auto list_leaves = utilities::pattern_scan("client.dll", "56 52 FF 50 18") + 5;
+	static auto list_leaves = utilities::pattern_scan(xor("client.dll"), sig_list_leaves) + 5;
 	auto info = *reinterpret_cast<renderable_info_t**>(reinterpret_cast<uintptr_t>(_AddressOfReturnAddress()) + 0x14);
 
 	if ((_ReturnAddress()) != list_leaves)

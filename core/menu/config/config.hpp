@@ -4,6 +4,7 @@
 
 #include "../../../dependencies/utilities/json/json.hpp"
 #include "../config/cheat_var.hpp"
+#include "../menu.hpp"
 
 namespace config {
 	void initialize();

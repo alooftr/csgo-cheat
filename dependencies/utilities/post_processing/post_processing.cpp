@@ -414,6 +414,9 @@ void post_processing::new_frame() noexcept
 void post_processing::perform_fullscreen_blur(ImDrawList* drawList, float alpha) noexcept
 {
     BlurEffect::draw(drawList, alpha);
+    BlurEffect::draw(drawList, alpha);
+    BlurEffect::draw(drawList, alpha);
+    BlurEffect::draw(drawList, alpha);
 }
 
 void post_processing::perform_fullscreen_chromatic_aberration(ImDrawList* drawList, float amount) noexcept

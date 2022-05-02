@@ -42,6 +42,7 @@ namespace menu {
         void anti_aim();
         void legit();
         void visuals();
+        void skin();
         void misc();
         void settings();
     }
