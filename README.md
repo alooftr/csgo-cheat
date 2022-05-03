@@ -7,10 +7,7 @@ updated version of: https://github.com/alphauc/sdk with some improvements, eg. u
 3. wando
 4. des1gner
 5. danielkrupinski
-<<<<<<< HEAD
-=======
 
->>>>>>> ba6fe1609800092030e38b3fba1020a83bf7b87f
 # media
 ![image](https://too.lewd.se/76ee83414ad1_csgo_9macPBqB06.png)
 
