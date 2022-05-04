@@ -19,80 +19,84 @@ bool hooks::initialize() {
 	const auto override_view_target = reinterpret_cast<void*>(get_virtual(interfaces::client_mode, override_view::index));
 	const auto draw_model_execute_target = reinterpret_cast<void*>(get_virtual(interfaces::model_render, draw_model_execute::index));
 	const auto frame_stage_notify_target = reinterpret_cast<void*>(get_virtual(interfaces::client, frame_stage_notify::index));
-	const auto sv_cheats_get_bool_target = reinterpret_cast<void*>(get_virtual(interfaces::console->get_convar(xor("sv_cheats")), sv_cheats_get_bool::index));
+	const auto sv_cheats_get_bool_target = reinterpret_cast<void*>(get_virtual(interfaces::console->get_convar(("sv_cheats")), sv_cheats_get_bool::index));
 	const auto do_post_screen_effects_target = reinterpret_cast<void*>(get_virtual(interfaces::client_mode, do_post_screen_effects::index));
-	const auto get_color_modulation_target = reinterpret_cast<void*>(utilities::pattern_scan(xor("materialsystem.dll"), xor ("55 8B EC 83 EC ? 56 8B F1 8A 46")));
+	const auto get_color_modulation_target = reinterpret_cast<void*>(utilities::pattern_scan(("materialsystem.dll"), sig_color_modulation));
 	const auto list_leaves_in_box_target = reinterpret_cast<void*>(get_virtual(interfaces::engine->get_bsp_query(), list_leaves_in_box::index));
-	const auto is_using_static_prop_debug_modes_target = reinterpret_cast<void*>(utilities::pattern_scan(xor("engine.dll"), xor("8B 0D ? ? ? ? 81 F9 ? ? ? ? 75 ? A1 ? ? ? ? 35 ? ? ? ? EB ? 8B 01 FF 50 ? 83 F8 ? 0F 85 ? ? ? ? 8B 0D")));
+	const auto is_using_static_prop_debug_modes_target = reinterpret_cast<void*>(utilities::pattern_scan(("engine.dll"), sig_is_using_static_prop_debug_modes));
 	const auto is_depth_of_field_enabled_target = reinterpret_cast<void*>(interfaces::is_depth_of_field_enabled);
 	const auto alloc_key_value_memory_target = reinterpret_cast<void*>(get_virtual(interfaces::key_values_system, alloc_key_value_memory::index));
-	const auto check_file_CRCs_with_server = reinterpret_cast<void*>(utilities::pattern_scan(xor("engine.dll"), xor("55 8B EC 81 EC ? ? ? ? 53 8B D9 89 5D F8 80")));
+	const auto check_file_CRCs_with_server_target = reinterpret_cast<void*>(utilities::pattern_scan(("engine.dll"), sig_check_file_CRCs_with_server));
 	const auto loose_file_allowed_target = reinterpret_cast<void*>(get_virtual(interfaces::file_system, loose_file_allowed::index));
 	const auto get_unverified_file_hashes_target = reinterpret_cast<void*>(get_virtual(interfaces::file_system, get_unverified_file_hashes::index));
+	const auto particle_collection_simulate = reinterpret_cast<void*>(utilities::pattern_scan("client.dll", sig_particle_collection_simulate));
 
 	if (MH_Initialize() != MH_OK)
-		throw std::runtime_error(xor("failed to initialize MH_Initialize."));
+		throw std::runtime_error(("failed to initialize MH_Initialize."));
 
 	if (MH_CreateHook(present_target, &present::hook, reinterpret_cast<void**>(&present::original)) != MH_OK) 
-		throw std::runtime_error(xor("failed to initialize present."));
+		throw std::runtime_error(("failed to initialize present."));
 
 	if (MH_CreateHook(reset_target, &reset::hook, reinterpret_cast<void**>(&reset::original)) != MH_OK) 
-		throw std::runtime_error(xor("failed to initialize reset."));
+		throw std::runtime_error(("failed to initialize reset."));
 
 	if (MH_CreateHook(create_move_target, &create_move::hook, reinterpret_cast<void**>(&create_move::original)) != MH_OK)
-		throw std::runtime_error(xor("failed to initialize create_move."));
+		throw std::runtime_error(("failed to initialize create_move."));
 
 	if (MH_CreateHook(paint_traverse_target, &paint_traverse::hook, reinterpret_cast<void**>(&paint_traverse::original)) != MH_OK)
-		throw std::runtime_error(xor("failed to initialize paint_traverse."));
+		throw std::runtime_error(("failed to initialize paint_traverse."));
 
 	if (MH_CreateHook(on_screen_size_changed_target, &on_screen_size_changed::hook, reinterpret_cast<void**>(&on_screen_size_changed::original)) != MH_OK)
-		throw std::runtime_error(xor("failed to initialize on_screen_size_changed_target."));
+		throw std::runtime_error(("failed to initialize on_screen_size_changed_target."));
 
 	if (MH_CreateHook(draw_model_execute_target, &draw_model_execute::hook, reinterpret_cast<void**>(&hooks::draw_model_execute::original)) != MH_OK)
-		throw std::runtime_error(xor("failed to initialize draw_model_execute."));
+		throw std::runtime_error(("failed to initialize draw_model_execute."));
 
 	if (MH_CreateHook(override_view_target, &override_view::hook, reinterpret_cast<void**>(&override_view::original)) != MH_OK) 
-		throw std::runtime_error(xor("failed to initialize override_view."));
+		throw std::runtime_error(("failed to initialize override_view."));
 	
 	if (MH_CreateHook(frame_stage_notify_target, &frame_stage_notify::hook, reinterpret_cast<void**>(&frame_stage_notify::original)) != MH_OK) 
-		throw std::runtime_error(xor("failed to initialize frame_stage_notify."));
+		throw std::runtime_error(("failed to initialize frame_stage_notify."));
 
 	if (MH_CreateHook(sv_cheats_get_bool_target, &sv_cheats_get_bool::hook, reinterpret_cast<void**>(&sv_cheats_get_bool::original)) != MH_OK) 
-		throw std::runtime_error(xor("failed to initialize sv_cheats."));
+		throw std::runtime_error(("failed to initialize sv_cheats."));
 
 	if (MH_CreateHook(do_post_screen_effects_target, &hooks::do_post_screen_effects::hook, reinterpret_cast<void**>(&do_post_screen_effects::original)) != MH_OK) 
-		throw std::runtime_error(xor("failed to initialize do_post_screen_effects."));
+		throw std::runtime_error(("failed to initialize do_post_screen_effects."));
 
 	if (MH_CreateHook(list_leaves_in_box_target, &hooks::list_leaves_in_box::hook, reinterpret_cast<void**>(&list_leaves_in_box::original)) != MH_OK) 
-		throw std::runtime_error(xor("failed to initialize list_leaves_in_box."));
+		throw std::runtime_error(("failed to initialize list_leaves_in_box."));
 
 	if (MH_CreateHook(get_color_modulation_target, &hooks::get_color_modulation::hook, reinterpret_cast<void**>(&get_color_modulation::original)) != MH_OK) 
-		throw std::runtime_error(xor("failed to initialize get_color_modulation."));
+		throw std::runtime_error(("failed to initialize get_color_modulation."));
 
 	if (MH_CreateHook(is_using_static_prop_debug_modes_target, &hooks::is_using_static_prop_debug_modes::hook, reinterpret_cast<void**>(&is_using_static_prop_debug_modes::original)) != MH_OK) 
-		throw std::runtime_error(xor("failed to initialize is_using_static_prop_debug_modes."));
+		throw std::runtime_error(("failed to initialize is_using_static_prop_debug_modes."));
 
 	if (MH_CreateHook(is_depth_of_field_enabled_target, &is_depth_of_field_enabled::hook, nullptr) != MH_OK)
-		throw std::runtime_error(xor("failed to initialize is_depth_of_field_enabled."));
+		throw std::runtime_error(("failed to initialize is_depth_of_field_enabled."));
 
 	if (MH_CreateHook(alloc_key_value_memory_target, &alloc_key_value_memory::hook, reinterpret_cast<void**>(&alloc_key_value_memory::original)) != MH_OK)
-		throw std::runtime_error(xor("failed to initialize alloc_key_value_memory."));
+		throw std::runtime_error(("failed to initialize alloc_key_value_memory."));
 
-	if (MH_CreateHook(check_file_CRCs_with_server, &check_file_CRCs_with_server::hook, nullptr) != MH_OK)
-		throw std::runtime_error(xor("failed to initialize check_file_CRCs_with_server."));
+	if (MH_CreateHook(check_file_CRCs_with_server_target, &check_file_CRCs_with_server::hook, nullptr) != MH_OK)
+		throw std::runtime_error(("failed to initialize check_file_CRCs_with_server."));
 
 	if (MH_CreateHook(loose_file_allowed_target, &loose_file_allowed::hook, nullptr) != MH_OK)
-		throw std::runtime_error(xor("failed to initialize loose_file_allowed."));
+		throw std::runtime_error(("failed to initialize loose_file_allowed."));
 
 	if (MH_CreateHook(get_unverified_file_hashes_target, &get_unverified_file_hashes::hook, nullptr) != MH_OK)
-		throw std::runtime_error(xor("failed to initialize loose_file_allowed."));
+		throw std::runtime_error(("failed to initialize loose_file_allowed."));
+
+	if (MH_CreateHook(particle_collection_simulate, &particle_collection_simulate::hook, reinterpret_cast<void**>(&particle_collection_simulate::original)) != MH_OK)
+		throw std::runtime_error(("failed to initialize particle_collection_simulate."));
 
 	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
-		throw std::runtime_error(xor("failed to enable hooks."));
+		throw std::runtime_error(("failed to enable hooks."));
 
 	window = FindWindowW(L"Valve001", NULL);
 	if (!window)
-		throw std::runtime_error(xor("failed to initialize game window."));
+		throw std::runtime_error(("failed to initialize game window."));
 
 	wndproc_original = reinterpret_cast<WNDPROC>(SetWindowLongW(window, GWL_WNDPROC, reinterpret_cast<LONG>(wndproc)));
 
@@ -142,10 +146,14 @@ static HRESULT D3DAPI hooks::present::hook(IDirect3DDevice9* device, RECT* sourc
 	if (!menu::settings::open){
 		menu::settings::alpha = 0;
 		alpha = std::clamp(alpha - (animation_frequency * ImGui::GetIO().DeltaTime) * 2, 0.f, 1.f);
-		post_processing::perform_fullscreen_blur(ImGui::GetBackgroundDrawList(), alpha);
+		int w, h;
+		interfaces::engine->get_screen_size(w, h);
+		//post_processing::perform_blur(ImGui::GetBackgroundDrawList(), alpha, w, h);
 	}
 	else {
-		post_processing::perform_fullscreen_blur(ImGui::GetBackgroundDrawList(), alpha);
+		int w, h;
+		interfaces::engine->get_screen_size(w, h);
+		//post_processing::perform_blur(ImGui::GetBackgroundDrawList(), alpha, w, h);
 	}
 
 	ImGui::EndFrame();
@@ -199,7 +207,8 @@ bool __stdcall hooks::create_move::hook(float input_sample_frametime, c_usercmd*
 	misc::movement::bunny_hop(cmd);
 	misc::movement::infinite_crouch(cmd);
 	misc::movement::null_strafe(cmd);
-	//misc::movement::pixel_surf(cmd);
+	misc::movement::auto_pistol(cmd);
+
 	prediction::start(cmd); {
 
 
@@ -240,8 +249,14 @@ void __stdcall hooks::paint_traverse::hook(unsigned int panel, bool force_repain
 		break;
 
 	case fnv::hash("FocusOverlayPanel"):
-		interfaces::panel->set_keyboard_input_enabled(panel, menu::settings::open);
-		interfaces::panel->set_mouse_input_enabled(panel, menu::settings::open);
+		if (!GetAsyncKeyState(VK_END)) {
+			interfaces::panel->set_keyboard_input_enabled(panel, menu::settings::open);
+			interfaces::panel->set_mouse_input_enabled(panel, menu::settings::open);
+		}
+		else {
+			interfaces::panel->set_keyboard_input_enabled(panel, menu::settings::open);
+			interfaces::panel->set_mouse_input_enabled(panel, menu::settings::open);
+		}
 		if (menu::settings::open)
 			alpha = std::clamp(alpha + animation_frequency * ImGui::GetIO().DeltaTime, 0.f, 1.f);
 
@@ -278,7 +293,7 @@ void __stdcall hooks::frame_stage_notify::hook(int frame_stage) {
 }
 
 bool __fastcall hooks::sv_cheats_get_bool::hook(PVOID convar, int edx) {
-	static auto cam_think = utilities::pattern_scan(xor("client.dll"), sig_cam_think);
+	static auto cam_think = utilities::pattern_scan(("client.dll"), sig_cam_think);
 
 	if (!convar)
 		return false;
@@ -297,7 +312,7 @@ int __stdcall hooks::do_post_screen_effects::hook(int value) {
 #define MAX_COORD_FLOAT ( 16384.0f )
 #define MIN_COORD_FLOAT ( -MAX_COORD_FLOAT )
 int __fastcall hooks::list_leaves_in_box::hook(void* bsp, void* edx, const vec3_t& mins, const vec3_t& maxs, unsigned short* list, int list_max) {
-	static auto list_leaves = utilities::pattern_scan(xor("client.dll"), sig_list_leaves) + 5;
+	static auto list_leaves = utilities::pattern_scan(("client.dll"), sig_list_leaves) + 5;
 	auto info = *reinterpret_cast<renderable_info_t**>(reinterpret_cast<uintptr_t>(_AddressOfReturnAddress()) + 0x14);
 
 	if ((_ReturnAddress()) != list_leaves)
@@ -366,6 +381,61 @@ bool __fastcall hooks::loose_file_allowed::hook(void* edc, void* edx) {
 }
 
 int __stdcall hooks::get_unverified_file_hashes::hook(void* _this, void* some_class, int max_files) {
-	console::log("[hooks]", "get_unverified_file_hashes on!");
 	return 0;
+}
+
+void __fastcall hooks::particle_collection_simulate::hook(particle_collection* this_ptr, void* edx) {
+	particle_collection_simulate::original(this_ptr);
+
+	particle_collection* root_colection = this_ptr;
+	while (root_colection->parent)
+		root_colection = root_colection->parent;
+
+	const char* root_name = root_colection->definition.object->name.buffer;
+
+	switch (fnv::hash(root_name)) {
+		case fnv::hash("molotov_groundfire"):
+		case fnv::hash("molotov_groundfire_00MEDIUM"):
+		case fnv::hash("molotov_groundfire_00HIGH"):
+		case fnv::hash("molotov_groundfire_fallback"):
+		case fnv::hash("molotov_groundfire_fallback2"):
+		case fnv::hash("molotov_explosion"):
+		case fnv::hash("explosion_molotov_air"):
+		case fnv::hash("extinguish_fire"):
+		case fnv::hash("weapon_molotov_held"):
+		case fnv::hash("weapon_molotov_fp"):
+		case fnv::hash("weapon_molotov_thrown"):
+		case fnv::hash("incgrenade_thrown_trail"):
+			switch (fnv::hash(this_ptr->definition.object->name.buffer))
+			{
+			case fnv::hash("explosion_molotov_air_smoke"):
+			case fnv::hash("molotov_smoking_ground_child01"):
+			case fnv::hash("molotov_smoking_ground_child02"):
+			case fnv::hash("molotov_smoking_ground_child02_cheapo"):
+			case fnv::hash("molotov_smoking_ground_child03"):
+			case fnv::hash("molotov_smoking_ground_child03_cheapo"):
+			case fnv::hash("molotov_smoke_screen"):
+				if (variables::visuals::world::molotov_fire) {
+					for (int i = 0; i < this_ptr->active_particle; i++) {
+						float* alpha = this_ptr->particle_attribute.float_attribute_pointer(PARTICLE_ATTRIBUTE_ALPHA, i);
+						*alpha = variables::visuals::world::molotov_fire_clr[3];
+					}
+				}
+				break;
+			default:
+				if (variables::visuals::world::molotov_fire) {
+					for (int i = 0; i < this_ptr->active_particle; i++) {
+						float* color = this_ptr->particle_attribute.float_attribute_pointer(PARTICLE_ATTRIBUTE_TINT_RGB, i);
+						color[0] = variables::visuals::world::molotov_fire_clr[0];
+						color[1] = variables::visuals::world::molotov_fire_clr[1];
+						color[2] = variables::visuals::world::molotov_fire_clr[2];
+					}
+				}
+				break;
+			}
+			break;
+		default:
+			//console::log("[particle_collection]", root_name);
+			break;
+	}
 }

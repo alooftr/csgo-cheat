@@ -97,7 +97,7 @@ private:
 
     ShaderProgram blurShaderX;
     ShaderProgram blurShaderY;
-    static constexpr auto blurDownsample = 4;
+    static constexpr auto blurDownsample = 6;
 
     BlurEffect() = default;
     BlurEffect(const BlurEffect&) = delete;
@@ -199,191 +199,6 @@ private:
     }
 };
 
-class ChromaticAberration {
-public:
-    static void draw(ImDrawList* drawList, float amount) noexcept
-    {
-        instance().amount = amount;
-        instance()._draw(drawList);
-    }
-
-    static void clearTexture() noexcept
-    {
-        instance()._clearTexture();
-    }
-
-private:
-    IDirect3DTexture9* texture = nullptr;
-
-    ShaderProgram shader;
-    float amount = 0.0f;
-
-    ChromaticAberration() = default;
-    ChromaticAberration(const ChromaticAberration&) = delete;
-
-    ~ChromaticAberration()
-    {
-        if (texture)
-            texture->Release();
-    }
-
-    static ChromaticAberration& instance() noexcept
-    {
-        static ChromaticAberration chromaticAberration;
-        return chromaticAberration;
-    }
-
-    void _clearTexture() noexcept
-    {
-        if (texture) {
-            texture->Release();
-            texture = nullptr;
-        }
-    }
-
-    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._begin(); }
-    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._end(); }
-
-    void createTexture() noexcept
-    {
-        if (!texture)
-            texture = ::createTexture(backbufferWidth, backbufferHeight);
-    }
-
-    void createShaders() noexcept
-    {
-        shader.init(chromatic_aberration);
-    }
-
-    void _begin() noexcept
-    {
-        copyBackbufferToTexture(texture, D3DTEXF_NONE);
-
-        device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-        device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-
-        const D3DMATRIX projection{ {{
-            1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, -1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            -1.0f / (backbufferWidth), 1.0f / (backbufferHeight), 0.0f, 1.0f
-        }} };
-        device->SetVertexShaderConstantF(0, &projection.m[0][0], 4);
-
-        shader.use(amount, 0);
-    }
-
-    void _end() noexcept
-    {
-        device->SetPixelShader(nullptr);
-    }
-
-    void _draw(ImDrawList* drawList) noexcept
-    {
-        createTexture();
-        createShaders();
-        if (!texture)
-            return;
-
-        drawList->AddCallback(&begin, nullptr);
-        drawList->AddImage(reinterpret_cast<ImTextureID>(texture), { -1.0f, -1.0f }, { 1.0f, 1.0f });
-        drawList->AddCallback(&end, nullptr);
-        drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
-    }
-};
-
-class MonochromeEffect {
-public:
-    static void draw(ImDrawList* drawList, float amount) noexcept
-    {
-        instance().amount = amount;
-        instance()._draw(drawList);
-    }
-
-    static void clearTexture() noexcept
-    {
-        instance()._clearTexture();
-    }
-
-private:
-    IDirect3DTexture9* texture = nullptr;
-
-    ShaderProgram shader;
-    float amount = 0.0f;
-
-    MonochromeEffect() = default;
-    MonochromeEffect(const MonochromeEffect&) = delete;
-
-    ~MonochromeEffect()
-    {
-        if (texture)
-            texture->Release();
-    }
-
-    static MonochromeEffect& instance() noexcept
-    {
-        static MonochromeEffect monochromeEffect;
-        return monochromeEffect;
-    }
-
-    void _clearTexture() noexcept
-    {
-        if (texture) {
-            texture->Release();
-            texture = nullptr;
-        }
-    }
-
-    static void begin(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._begin(); }
-    static void end(const ImDrawList*, const ImDrawCmd* cmd) noexcept { instance()._end(); }
-
-    void createTexture() noexcept
-    {
-        if (!texture)
-            texture = ::createTexture(backbufferWidth, backbufferHeight);
-    }
-
-    void createShaders() noexcept
-    {
-        shader.init(monochrome);
-    }
-
-    void _begin() noexcept
-    {
-        copyBackbufferToTexture(texture, D3DTEXF_NONE);
-
-        device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-        device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-
-        const D3DMATRIX projection{ {{
-            1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, -1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            -1.0f / (backbufferWidth), 1.0f / (backbufferHeight), 0.0f, 1.0f
-        }} };
-        device->SetVertexShaderConstantF(0, &projection.m[0][0], 4);
-        shader.use(amount, 0);
-    }
-
-    void _end() noexcept
-    {
-        device->SetPixelShader(nullptr);
-    }
-
-    void _draw(ImDrawList* drawList) noexcept
-    {
-        createTexture();
-        createShaders();
-        if (!texture)
-            return;
-
-        drawList->AddCallback(&begin, nullptr);
-        drawList->AddImage(reinterpret_cast<ImTextureID>(texture), { -1.0f, -1.0f }, { 1.0f, 1.0f });
-        drawList->AddCallback(&end, nullptr);
-        drawList->AddCallback(ImDrawCallback_ResetRenderState, nullptr);
-    }
-};
-
 void post_processing::set_device(IDirect3DDevice9* device) noexcept
 {
     ::device = device;
@@ -397,34 +212,16 @@ void post_processing::clear_blur_textures() noexcept
 void post_processing::on_device_reset() noexcept
 {
     BlurEffect::clearTextures();
-    ChromaticAberration::clearTexture();
 }
 
 void post_processing::new_frame() noexcept
-{
-    if (const auto [width, height] = ImGui::GetIO().DisplaySize; backbufferWidth != static_cast<int>(width) || backbufferHeight != static_cast<int>(height)) {
-        BlurEffect::clearTextures();
-        ChromaticAberration::clearTexture();
-        MonochromeEffect::clearTexture();
-        backbufferWidth = static_cast<int>(width);
-        backbufferHeight = static_cast<int>(height);
-    }
+{   
+    BlurEffect::clearTextures();
 }
 
-void post_processing::perform_fullscreen_blur(ImDrawList* drawList, float alpha) noexcept
+void post_processing::perform_blur(ImDrawList* drawList, float alpha, int w, int h) noexcept
 {
+    backbufferWidth = static_cast<int>(w);
+    backbufferHeight = static_cast<int>(h);
     BlurEffect::draw(drawList, alpha);
-    BlurEffect::draw(drawList, alpha);
-    BlurEffect::draw(drawList, alpha);
-    BlurEffect::draw(drawList, alpha);
-}
-
-void post_processing::perform_fullscreen_chromatic_aberration(ImDrawList* drawList, float amount) noexcept
-{
-    ChromaticAberration::draw(drawList, amount);
-}
-
-void post_processing::perform_fullscreen_monochrome(ImDrawList* drawList, float amount) noexcept
-{
-    MonochromeEffect::draw(drawList, amount);
 }

@@ -14,7 +14,5 @@ namespace post_processing
     void on_device_reset() noexcept;
 #endif
     void new_frame() noexcept;
-    void perform_fullscreen_blur(ImDrawList* drawList, float alpha) noexcept;
-    void perform_fullscreen_chromatic_aberration(ImDrawList* drawList, float amount) noexcept;
-    void perform_fullscreen_monochrome(ImDrawList* drawList, float amount) noexcept;
+    void perform_blur(ImDrawList* drawList, float alpha, int w, int h) noexcept;
 }

@@ -3571,7 +3571,7 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_dat
 
     // value
     PushStyleColor(ImGuiCol_Text, ImVec4(ImColor(255, 255, 255, 255)));
-    RenderTextClipped(rect.Min, rect.Min + ImVec2(it_anim->second.value + 15, 15), value_buf, value_buf_end, NULL, ImVec2(1.f, 0.0f));
+    RenderTextClipped(data.Max - ImVec2(data.Min.x, 35), data.Max - ImVec2(1, 15), value_buf, value_buf_end, NULL, ImVec2(1.f, 0.0f));
     PopStyleColor();
 
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
@@ -5438,7 +5438,7 @@ static void ColorEditRestoreHS(const float* col, float* H, float* S, float* V)
 bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flags)
 {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 7);
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
+    //ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 7);
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -5875,39 +5875,22 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
         PushItemFlag(ImGuiItemFlags_NoNavDefaultFocus, true);
         ImVec4 col_v4(col[0], col[1], col[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : col[3]);
         if ((flags & ImGuiColorEditFlags_NoLabel))
-            Text("Current");
+            Text("Copy");
 
         ImGuiColorEditFlags sub_flags_to_forward = ImGuiColorEditFlags_InputMask_ | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_AlphaPreviewHalf | ImGuiColorEditFlags_NoTooltip;
-        ColorButton("##current", col_v4, (flags & sub_flags_to_forward), ImVec2(square_sz * 3, square_sz * 2));
+        if (ColorButton("##copy", col_v4, (flags & sub_flags_to_forward), ImVec2(square_sz * 3, square_sz * 2))) {
+            memcpy(variables::copy_paste_color, col, components * sizeof(float));
+
+        }
         if (ref_col != NULL)
         {
-            Text("Original");
-            ImVec4 ref_col_v4(ref_col[0], ref_col[1], ref_col[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : ref_col[3]);
-            if (ColorButton("##original", ref_col_v4, (flags & sub_flags_to_forward), ImVec2(square_sz * 3, square_sz * 2)))
+            Text("Paste");
+            ImVec4 ref_col_v4(variables::copy_paste_color[0], variables::copy_paste_color[1], variables::copy_paste_color[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : variables::copy_paste_color[3]);
+            if (ColorButton("##paste", ref_col_v4, (flags & sub_flags_to_forward), ImVec2(square_sz * 3, square_sz * 2)))
             {
-                memcpy(col, ref_col, components * sizeof(float));
+                memcpy(col, variables::copy_paste_color, components * sizeof(float));
                 value_changed = true;
             }
-        }
-        ImGui::SameLine();
-
-        ImGui::Spacing();
-        ImGui::Spacing();
-        ImGui::Spacing();
-
-        if (Button("Copy##copy", ImVec2(square_sz * 3, square_sz * 2)))
-        {
-            memcpy(variables::copy_paste_color, col, components * sizeof(float));
-        }
-
-        ImGui::Spacing();
-        ImGui::Spacing();
-        ImGui::Spacing();
-
-        if (Button("Paste##paste", ImVec2(square_sz * 3, square_sz * 2)))
-        {
-            memcpy(col, variables::copy_paste_color, components * sizeof(float));
-            value_changed = true;
         }
         PopItemFlag();
         EndGroup();

@@ -43,6 +43,26 @@ public:
 
 class i_game_event_manager2 {
 public:
+	enum
+	{
+		server_side = 0,
+		client_side,
+		client_stub,
+		server_side_old,
+		client_side_old,
+	};
+
+	enum
+	{
+		type_local = 0,
+		type_string,
+		type_float,
+		type_long,
+		type_short,
+		type_byte,
+		type_bool,
+	};
+
 	virtual             ~i_game_event_manager2() = 0;
 	virtual int         load_events_from_file( const char *filename ) = 0;
 	virtual void        reset() = 0;

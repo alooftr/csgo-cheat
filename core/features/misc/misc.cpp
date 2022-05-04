@@ -233,3 +233,22 @@ void misc::movement::mini_jump(c_usercmd* cmd) {
 		}
 	}
 }
+
+void misc::movement::auto_pistol(c_usercmd* cmd) {
+	if (!variables::misc::auto_pistol)
+		return;
+
+	const auto weapon = csgo::local_player->active_weapon();
+	if (!weapon)
+		return;
+
+	const auto weapon_data = interfaces::weapon_system->get_weapon_data(weapon->item_definition_index());
+	if (!weapon_data)
+		return;
+
+	if (weapon_data->type != WEAPONTYPE_PISTOL || weapon->item_definition_index() == WEAPON_REVOLVER)
+		return;
+
+	if (weapon->next_primary_attack() - csgo::local_player->get_tick_base() * interfaces::globals->interval_per_tick > 0)
+		cmd->buttons &= ~in_attack;
+}

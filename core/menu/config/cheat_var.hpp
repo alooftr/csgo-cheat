@@ -27,8 +27,22 @@ namespace variables {
 
 		inline bool mini_jump = false;
 		inline int mini_jump_key = 0;
+	}
+	namespace misc {
+		inline bool auto_pistol = false;
 
+	}
 
+	namespace visuals {
+		namespace world{
+			inline bool molotov_fire = false;
+			inline float molotov_fire_clr[4] = { 255.f / 255.f,  255.f / 255.f,  255.f / 255.f,  0.f / 255.f };
+		}
+		namespace player {
 
+		}
+		namespace chams {
+
+		}
 	}
 }

@@ -20,7 +20,6 @@ namespace menu {
         inline static float animation_frequency = 2.f;
         static float width = 736.f, height = 400.f;
 
-
         static int weapon_index = 7;
         static int weapon_vector_index = 0;
         struct weapon_name_t {
@@ -44,6 +43,25 @@ namespace menu {
         void visuals();
         void skin();
         void misc();
+        void player();
         void settings();
     }
+
+    struct player_list_data
+    {
+        int i = -1;
+        std::string name;
+
+        player_list_data()
+        {
+            i = -1;
+            name.clear();
+        }
+
+        player_list_data(int i, std::string name) //-V818
+        {
+            this->i = i;
+            this->name = name; //-V820
+        }
+    };
 };

@@ -125,4 +125,10 @@ namespace hooks {
 		static constexpr auto index = 101;
 		int __stdcall hook(void* _this, void* some_class, int max_files);
 	}
+
+	namespace particle_collection_simulate {
+		using fn = void(__thiscall*)(particle_collection*);
+		inline fn original = nullptr;
+		void __fastcall hook(particle_collection* this_ptr, void* edx);
+	}
 }

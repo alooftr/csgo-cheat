@@ -4,6 +4,9 @@
 #define CHILD_SECOND_POS 100 + 12 * 2 + 302, 15 //(CHILD_POS_X + (CHILD_SIZE_SPACE * 2) + (CHILD_SIZE_SIZE_W + 2)), CHILD_POS_HEIGHT
 #define CHILD_SIZE 300, 375
 
+#define ColorEditFl ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_NoTooltip
+
+
 void update_animation_alpha() {
     auto& style = ImGui::GetStyle();
     menu::settings::alpha = 0.f;
@@ -63,17 +66,17 @@ void menu::initialize() {
     io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
     
 
-    menu::settings::menu_font_12 = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
+    menu::settings::menu_font_12 = io.Fonts->AddFontFromMemoryCompressedTTF(
         roboto_medium_compressed_data,
         roboto_medium_compressed_size,
         12.f);
 
-    menu::settings::menu_font_14 = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
+    menu::settings::menu_font_14 = io.Fonts->AddFontFromMemoryCompressedTTF(
         roboto_medium_compressed_data,
         roboto_medium_compressed_size,
         14.f);
 
-    menu::settings::menu_font_16 = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
+    menu::settings::menu_font_16 = io.Fonts->AddFontFromMemoryCompressedTTF(
         roboto_medium_compressed_data,
         roboto_medium_compressed_size,
         16.f);
@@ -162,6 +165,7 @@ void menu::render() {
         const auto& pWindowDrawList = ImGui::GetWindowDrawList();
         const auto& pBackgroundDrawList = ImGui::GetBackgroundDrawList();
         const auto& pForegroundDrawList = ImGui::GetForegroundDrawList();
+
         //Background 
         P1 = ImVec2(0.000f, 0.000f);
         P1.x += CurrentWindowPos.x;
@@ -197,7 +201,8 @@ void menu::render() {
         P2.x += CurrentWindowPos.x;
         P2.y += CurrentWindowPos.y;
         pDrawList = pForegroundDrawList;
-        pDrawList->AddRectFilledMultiColor(P1, P2, ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], 255.f),
+        pDrawList->AddRectFilledMultiColor(P1, P2, 
+            ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], 255.f),
             ImColor(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], 255.f),
             ImColor(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], 255.f),
             ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], 255.f));
@@ -240,8 +245,14 @@ void menu::render() {
         }
 
         ImGui::SetCursorPos(ImVec2(8.000f, 20.000f + 25.f * 6));
-        if (ImGui::Tab(xor("Settings"), { 85.000f, 0.000f }, current_tab == 6 ? true : false)) {
+        if (ImGui::Tab(xor ("Players"), { 85.000f, 0.000f }, current_tab == 6 ? true : false)) {
             current_tab = 6;
+            update_animation_alpha();
+        }
+
+        ImGui::SetCursorPos(ImVec2(8.000f, 20.000f + 25.f * 7));
+        if (ImGui::Tab(xor("Settings"), { 85.000f, 0.000f }, current_tab == 7 ? true : false)) {
+            current_tab = 7;
             update_animation_alpha();
         }
         ImGui::PopFont();
@@ -265,9 +276,11 @@ void menu::render() {
             tabs::misc();
         }
         else if (current_tab == 6) {
+            tabs::player();
+        }
+        else if (current_tab == 7) {
             tabs::settings();
         }
-
         ImGui::End();
     }
     ImGui::PopStyleColor();
@@ -325,6 +338,10 @@ void menu::tabs::visuals() {
     ImGui::BeginChild(xor("Child 1"), { CHILD_SIZE }, true);
     ImGui::PushFont(menu::settings::menu_font_12);
 
+    ImGui::Checkbox("Molotov fire##mlfcb", &variables::visuals::world::molotov_fire);
+    ImGui::SameLine();
+    ImGui::ColorEdit4("##mlfire", variables::visuals::world::molotov_fire_clr, ColorEditFl); tool_tip("Alpha bar is for the molotov's smoke alpha");
+    
     ImGui::PopFont();
     ImGui::EndChild();
 
@@ -358,6 +375,8 @@ void menu::tabs::misc() {
     ImGui::PushFont(menu::settings::menu_font_12);
 
     ImGui::Checkbox(xor("Auto Bhop##abhop"), &variables::movement::bunny_hop);
+    ImGui::Checkbox(xor ("Null strafe"), &variables::movement::null_strafe);
+    ImGui::Checkbox(xor ("Infinite crouch"), &variables::movement::inifnite_crouch);
     ImGui::Checkbox(xor("Edge jump##ejump"), &variables::movement::edge_jump);
     if (variables::movement::edge_jump)
     {
@@ -365,7 +384,7 @@ void menu::tabs::misc() {
         ImGui::Hotkey(xor("##1"), &variables::movement::edge_jump_key, ImVec2(80.f, 0));
     }
 
-    ImGui::Checkbox(xor("Edge bug##ebug"), &variables::movement::edge_bug);
+    ImGui::Checkbox(xor("Edge bug ##ebug"), &variables::movement::edge_bug);
     if (variables::movement::edge_bug) {
         ImGui::SameLine();
         ImGui::Hotkey(xor("##2"), &variables::movement::edge_bug_key, ImVec2(80.f, 0));
@@ -377,9 +396,6 @@ void menu::tabs::misc() {
         ImGui::SameLine();
         ImGui::Hotkey(xor("##3"), &variables::movement::jump_bug_key, ImVec2(80.f, 0));
     }
-
-    ImGui::Checkbox(xor("Null strafe"), &variables::movement::null_strafe);
-    ImGui::Checkbox(xor("Infinite crouch"), &variables::movement::inifnite_crouch);
     
     ImGui::Checkbox(xor("Mini jump##mjump"), &variables::movement::mini_jump);
     if (variables::movement::mini_jump) {
@@ -389,8 +405,8 @@ void menu::tabs::misc() {
 
     ImGui::Checkbox(xor("Strafe Optimize##sopti"), &variables::movement::strafe_optimizer);
     if (variables::movement::strafe_optimizer) {
-        ImGui::SliderInt(xor("Min speed##mspeed"), &variables::movement::strafe_optimizer_min_speed, 200, 300, "%d");
-        ImGui::SliderInt(xor("Desired gain##dgain"), &variables::movement::strafe_optimizer_desired_gain, 10, 50, "%d");
+        ImGui::SliderInt(xor("Min speed"), &variables::movement::strafe_optimizer_min_speed, 200, 300, "%d");
+        ImGui::SliderInt(xor("Desired gain"), &variables::movement::strafe_optimizer_desired_gain, 10, 50, "%d");
     }
 
     ImGui::PopFont();
@@ -400,20 +416,52 @@ void menu::tabs::misc() {
     ImGui::BeginChild(xor("Miscellaneous"), { CHILD_SIZE }, true);
     ImGui::PushFont(menu::settings::menu_font_12);
 
+    ImGui::Checkbox(xor ("Auto pistol"), &variables::misc::auto_pistol);
+
+    ImGui::PopFont();
+    ImGui::EndChild();
+}
+
+void menu::tabs::player() {
+    static int current_player = 0;
+    static bool is_selected;
+    static std::vector <player_list_data> players;
+    char player_name[64] = {};
+    player_t* entity;
+    player_info_t info;
+
+    ImGui::SetCursorPos({ CHILD_FIRST_POS });
+    ImGui::BeginChild(xor ("Player"), { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
+
+    if (interfaces::engine->is_in_game()) {
+        ImGui::Text("Soon");  
+    }
+    else {
+        ImGui::Text("Empty"); //not in game 
+    }
+
+    ImGui::PopFont();
+    ImGui::EndChild();
+
+    ImGui::SetCursorPos({ CHILD_SECOND_POS });
+    ImGui::BeginChild(xor ("Child 2"), { CHILD_SIZE }, true);
+    ImGui::PushFont(menu::settings::menu_font_12);
+
     ImGui::PopFont();
     ImGui::EndChild();
 }
 
 void menu::tabs::settings() {
-    static const char* configs[] = { xor("1"), xor("2"), xor("3"), xor("4"), xor("5") };
-    static const char* choices[]{ xor("  yes"), xor("  no") };
+    static const char* configs[] = { "1", "2", "3", "4", "5"};
+    static const char* choices[]{ "  yes", "  no" };
     static int current_config = 0;
 
     ImGui::SetCursorPos({ CHILD_FIRST_POS });
     ImGui::BeginChild(xor("Config"), { CHILD_SIZE }, true);
     ImGui::PushFont(menu::settings::menu_font_12);
 
-    ImGui::SliderFloat(xor("Menu animation speed"), &menu::settings::animation_frequency, 0.1f, 10.f, "%.2f");
+    ImGui::SliderFloat(xor("Menu animation freqency"), &menu::settings::animation_frequency, 0.1f, 10.f, "%.2f");
     ImGui::Spacing();
 
     ImGui::ColorEdit3(xor("Menu Color"), variables::menu_clr);

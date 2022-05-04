@@ -25,7 +25,6 @@ namespace console {
 
 	template <typename ... Args>
 	void log(char const* const title,char const* const format, Args const& ... args) {
-#ifdef _DEBUG
 		time_t t;
 		t = time(NULL);
 		struct tm tm = *localtime(&t);
@@ -35,11 +34,11 @@ namespace console {
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSE_CYAN);
 		printf(title);
 
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_WHITE);
+		printf(xor (" --> "));
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), wConsoleColor);
-		printf(xor(" --> "));
 		printf(format, args ...);
 		printf("\n");
-#endif
 	}
 
 	inline const void push_color(const std::uint8_t wColor)

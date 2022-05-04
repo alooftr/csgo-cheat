@@ -48,6 +48,10 @@
 #define sig_file_system xor("8B 0D ? ? ? ? 8D 95 ? ? ? ? 6A 00 C6")
 #define sig_cam_think xor("85 C0 75 30 38 86")
 #define sig_list_leaves xor("56 52 FF 50 18")
+#define sig_color_modulation xor("55 8B EC 83 EC ? 56 8B F1 8A 46")
+#define sig_is_using_static_prop_debug_modes xor("8B 0D ? ? ? ? 81 F9 ? ? ? ? 75 ? A1 ? ? ? ? 35 ? ? ? ? EB ? 8B 01 FF 50 ? 83 F8 ? 0F 85 ? ? ? ? 8B 0D")
+#define sig_check_file_CRCs_with_server xor("55 8B EC 81 EC ? ? ? ? 53 8B D9 89 5D F8 80")
+#define sig_particle_collection_simulate xor("55 8B EC 83 E4 F8 83 EC 30 56 57 8B F9 0F")
 
 namespace csgo {
 	extern player_t* local_player;

@@ -352,36 +352,37 @@ private:
 	}
 
 public:
-	NETVAR("DT_BasePlayer", "m_hViewModel[0]", view_model, int)
-	NETVAR("DT_CSPlayer", "m_bHasDefuser", has_defuser, bool)
-	NETVAR("DT_CSPlayer", "m_bGunGameImmunity", has_gun_game_immunity, bool)
-	NETVAR("DT_CSPlayer", "m_iShotsFired", shots_fired, int)
-	NETVAR("DT_CSPlayer", "m_angEyeAngles", eye_angles, vec3_t)
-	NETVAR("DT_CSPlayer", "m_ArmorValue", armor, int)
-	NETVAR("DT_CSPlayer", "m_bHasHelmet", has_helmet, bool)
-	NETVAR("DT_CSPlayer", "m_bIsScoped", is_scoped, bool)
-	NETVAR("DT_CSPlayer", "m_bIsDefusing", is_defusing, bool)
-	NETVAR("DT_CSPlayer", "m_iAccount", money, int)
-	NETVAR("DT_CSPlayer", "m_flLowerBodyYawTarget", lower_body_yaw, float)
-	NETVAR("DT_CSPlayer", "m_flNextAttack", next_attack, float)
-	NETVAR("DT_CSPlayer", "m_flFlashDuration", flash_duration, float)
-	NETVAR("DT_CSPlayer", "m_flFlashMaxAlpha", flash_alpha, float)
-	NETVAR("DT_CSPlayer", "m_bHasNightVision", has_night_vision, bool)
-	NETVAR("DT_CSPlayer", "m_bNightVisionOn", night_vision_on, bool)
-	NETVAR("DT_CSPlayer", "m_iHealth", health, int)
-	NETVAR("DT_CSPlayer", "m_lifeState", life_state, int)
-	NETVAR("DT_CSPlayer", "m_fFlags", flags, int)
-	NETVAR("DT_BasePlayer", "m_viewPunchAngle", punch_angle, vec3_t)
-	NETVAR("DT_BasePlayer", "m_aimPunchAngle", aim_punch_angle, vec3_t)
-	NETVAR("DT_BasePlayer", "m_vecVelocity[0]", velocity, vec3_t)
-	NETVAR("DT_BasePlayer", "m_flMaxspeed", max_speed, float)
-	NETVAR("DT_BaseEntity", "m_flShadowCastDistance", fov_time, float)
-	NETVAR("DT_BasePlayer", "m_hObserverTarget", observer_target, unsigned long)
-	NETVAR("DT_BasePlayer", "m_nHitboxSet", hitbox_set, int)
-	NETVAR("DT_CSPlayer", "m_flDuckAmount", duck_amount, float)
-	NETVAR("DT_CSPlayer", "m_bHasHeavyArmor", has_heavy_armor, bool)
-	NETVAR("DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", smoke_grenade_tick_begin, int)
-	NETVAR("DT_CSPlayer", "m_nTickBase", get_tick_base, int)
+	NETVAR("DT_BasePlayer", "m_hViewModel[0]", view_model, int);
+	NETVAR("DT_CSPlayer", "m_bHasDefuser", has_defuser, bool);
+	NETVAR("DT_CSPlayer", "m_bGunGameImmunity", has_gun_game_immunity, bool);
+	NETVAR("DT_CSPlayer", "m_iShotsFired", shots_fired, int);
+	NETVAR("DT_CSPlayer", "m_angEyeAngles", eye_angles, vec3_t);
+	NETVAR("DT_CSPlayer", "m_ArmorValue", armor, int);
+	NETVAR("DT_CSPlayer", "m_bHasHelmet", has_helmet, bool);
+	NETVAR("DT_CSPlayer", "m_bIsScoped", is_scoped, bool);
+	NETVAR("DT_CSPlayer", "m_bIsDefusing", is_defusing, bool);
+	NETVAR("DT_CSPlayer", "m_iAccount", money, int);
+	NETVAR("DT_CSPlayer", "m_flLowerBodyYawTarget", lower_body_yaw, float);
+	NETVAR("DT_CSPlayer", "m_flNextAttack", next_attack, float);
+	NETVAR("DT_CSPlayer", "m_flFlashDuration", flash_duration, float);
+	NETVAR("DT_CSPlayer", "m_flFlashMaxAlpha", flash_alpha, float);
+	NETVAR("DT_CSPlayer", "m_bHasNightVision", has_night_vision, bool);
+	NETVAR("DT_CSPlayer", "m_bNightVisionOn", night_vision_on, bool);
+	NETVAR("DT_CSPlayer", "m_iHealth", health, int);
+	NETVAR("DT_CSPlayer", "m_lifeState", life_state, int);
+	NETVAR("DT_CSPlayer", "m_fFlags", flags, int);
+	NETVAR("DT_BasePlayer", "m_viewPunchAngle", punch_angle, vec3_t);
+	NETVAR("DT_BasePlayer", "m_aimPunchAngle", aim_punch_angle, vec3_t);
+	NETVAR("DT_BasePlayer", "m_vecVelocity[0]", velocity, vec3_t);
+	NETVAR("DT_BasePlayer", "m_flMaxspeed", max_speed, float);
+	NETVAR("DT_BaseEntity", "m_flShadowCastDistance", fov_time, float);
+	NETVAR("DT_BasePlayer", "m_hObserverTarget", observer_target, unsigned long);
+	NETVAR("DT_BasePlayer", "m_nHitboxSet", hitbox_set, int);
+	NETVAR("DT_CSPlayer", "m_flDuckAmount", duck_amount, float);
+	NETVAR("DT_CSPlayer", "m_bHasHeavyArmor", has_heavy_armor, bool);
+	NETVAR("DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", smoke_grenade_tick_begin, int);
+	NETVAR("DT_CSPlayer", "m_nTickBase", get_tick_base, int);
+	NETVAR("DT_CSPlayer", "m_bIsSpawnRappelling ", is_rappelling, int);
 	//bomb
 	NETVAR("DT_PlantedC4", "m_bBombDefused", c4_defused, bool);
 	NETVAR("DT_PlantedC4", "m_flC4Blow", c4_blow_time, float);
@@ -410,10 +411,10 @@ public:
 	}
 
 	anim_state* get_anim_state() {
-		return *reinterpret_cast<anim_state * *>(this + 0x3914);
+		return *reinterpret_cast<anim_state**>(this + 0x3914);
 	}
 
-	bool can_see_player_pos(player_t * player, const vec3_t & pos) {
+	bool can_see_player_pos(player_t* player, const vec3_t& pos) {
 		trace_t tr;
 		ray_t ray;
 		trace_filter filter;
@@ -459,22 +460,22 @@ public:
 	}
 
 	bool is_alive() {
-		if ( !this ) return false;
+		if (!this) return false;
 		return this->health() > 0;
 	}
 
 	bool is_moving() {
-		if ( !this ) return false;
+		if (!this) return false;
 		return this->velocity().length() > 0.1f;
 	}
 
 	bool is_in_air() {
-		if ( !this ) return false;
-		return !( this->flags() & fl_onground );
+		if (!this) return false;
+		return !(this->flags() & fl_onground);
 	}
 
 	bool is_flashed() {
-		if ( !this ) return false;
+		if (!this) return false;
 		return this->flash_duration() > 0.0f;
 	}
 
@@ -490,16 +491,16 @@ public:
 
 	void update_client_side_animations() {
 		using original_fn = void(__thiscall*)(void*);
-		(*(original_fn * *)this)[223](this);
+		(*(original_fn**)this)[223](this);
 	}
 
 	vec3_t& abs_origin() {
 		using original_fn = vec3_t & (__thiscall*)(void*);
-		return (*(original_fn * *)this)[10](this);;
+		return (*(original_fn**)this)[10](this);;
 	}
 	vec3_t& abs_angles() {
 		using original_fn = vec3_t & (__thiscall*)(void*);
-		return (*(original_fn * *)this)[11](this);;
+		return (*(original_fn**)this)[11](this);;
 	}
 
 	int move_type() {

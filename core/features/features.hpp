@@ -13,7 +13,7 @@ namespace misc {
 		void null_strafe(c_usercmd* cmd);
 		void strafe_optimizer(c_usercmd* cmd);
 		void mini_jump(c_usercmd* cmd);
-
+		void auto_pistol(c_usercmd* cmd);
 	};
 }
 

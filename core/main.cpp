@@ -3,6 +3,7 @@
 #include "../dependencies/utilities/utilities.hpp"
 #include "menu/menu.hpp"
 #include "menu/config/config.hpp"
+#include "hooks/event_listener.hpp"
 
 unsigned long WINAPI initialize(void* instance) {
 	while (!GetModuleHandleA("serverbrowser.dll"))
@@ -17,7 +18,8 @@ unsigned long WINAPI initialize(void* instance) {
 		render::initialize();
 		hooks::initialize();
 		config::initialize();
-		console::push_color(FOREGROUND_INTENSE_MAGENTA);
+		event_listener.initialize();
+		console::push_color(FOREGROUND_INTENSE_CYAN);
 		console::log("[info]", "csgo-cheat - build date: %s / %s", __DATE__, __TIME__);
 		console::pop_color();
 		interfaces::console->console_color_printf(Color((int)(variables::menu_clr[0] * 255), (int)(variables::menu_clr[1] * 255), (int)(variables::menu_clr[2] * 255), 255), "[csgo-cheat] - build date: %s / %s\n", __DATE__, __TIME__);
@@ -36,7 +38,7 @@ unsigned long WINAPI initialize(void* instance) {
 
 unsigned long WINAPI release() {
 	hooks::release();
-
+	event_listener.release();
 #ifdef _DEBUG
 	console::release();
 #endif
@@ -44,11 +46,15 @@ unsigned long WINAPI release() {
 	return TRUE;
 }
 
-std::int32_t WINAPI DllMain(const HMODULE instance [[maybe_unused]], const unsigned long reason, const void* reserved [[maybe_unused]] ) {
+std::int32_t WINAPI DllMain(const HMODULE instance, const unsigned long reason, const void* reserved [[maybe_unused]] ) {
 	DisableThreadLibraryCalls(instance);
 
 	switch (reason) {
 	case DLL_PROCESS_ATTACH: {
+		if (GetModuleHandle("csgo.exe") == nullptr) {
+			throw std::runtime_error("This is not csgo lmao");
+			return false;
+		}
 		if (auto handle = CreateThread(nullptr, NULL, initialize, instance, NULL, nullptr))
 			CloseHandle(handle);
 

@@ -91,12 +91,13 @@ namespace interfaces {
 	inline player_move_helper* move_helper= nullptr;
 	inline i_weapon_system* weapon_system= nullptr;
 	inline void* key_values_system = nullptr;
+	inline i_filesystem* file_system = nullptr;
 	inline std::uint8_t* alloc_key_values_client = nullptr;
 	inline std::uint8_t* alloc_key_values_engine = nullptr;
-	inline i_filesystem* file_system = nullptr;
 	inline std::uintptr_t draw_screen_effect_material;
 	inline std::uint8_t* is_depth_of_field_enabled = nullptr;
 	inline IDirect3DDevice9* device{};
+	inline void* sound = nullptr;
 
 	bool initialize();
 }
