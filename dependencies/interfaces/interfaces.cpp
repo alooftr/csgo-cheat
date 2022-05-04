@@ -164,10 +164,6 @@ bool interfaces::initialize() {
 	if (client_state)
 		console::log("[custom interfaces]" ,"client_state found at 0x%p", client_state);
 
-	directx = **reinterpret_cast<IDirect3DDevice9***>(utilities::pattern_scan("shaderapidx9.dll", sig_directx) + 1);
-	if (directx)
-		console::log("[custom interfaces]" ,"directx found at 0x%p", directx);
-
 	input = *reinterpret_cast<i_input**>(utilities::pattern_scan("client.dll", sig_input) + 1);
 	if (input)
 		console::log("[custom interfaces]" ,"input found at 0x%p", input);
@@ -195,6 +191,9 @@ bool interfaces::initialize() {
 	draw_screen_effect_material = relativeToAbsolute<uintptr_t>(find_pattern("client.dll", "\xE8????\x83\xC4\x0C\x8D\x4D\xF8") + 1);
 	if (draw_screen_effect_material)
 		console::log("[custom interfaces]", ("draw_screen_effect_material found at 0x%p"), draw_screen_effect_material)	;
+
+	line_go_thru_smoke = utilities::pattern_scan("client.dll", "55 8B EC 83 EC 08 8B 15 ? ? ? ? 0F");
+
 
 	console::log("[interfaces]" ,"initialized!");
 

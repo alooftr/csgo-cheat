@@ -29,7 +29,7 @@ bool hooks::initialize() {
 	const auto check_file_CRCs_with_server_target = reinterpret_cast<void*>(utilities::pattern_scan(("engine.dll"), sig_check_file_CRCs_with_server));
 	const auto loose_file_allowed_target = reinterpret_cast<void*>(get_virtual(interfaces::file_system, loose_file_allowed::index));
 	const auto get_unverified_file_hashes_target = reinterpret_cast<void*>(get_virtual(interfaces::file_system, get_unverified_file_hashes::index));
-	const auto particle_collection_simulate = reinterpret_cast<void*>(utilities::pattern_scan("client.dll", sig_particle_collection_simulate));
+	const auto particle_collection_simulate_target = reinterpret_cast<void*>(utilities::pattern_scan("client.dll", sig_particle_collection_simulate));
 
 	if (MH_Initialize() != MH_OK)
 		throw std::runtime_error(("failed to initialize MH_Initialize."));
@@ -88,9 +88,9 @@ bool hooks::initialize() {
 	if (MH_CreateHook(get_unverified_file_hashes_target, &get_unverified_file_hashes::hook, nullptr) != MH_OK)
 		throw std::runtime_error(("failed to initialize loose_file_allowed."));
 
-	if (MH_CreateHook(particle_collection_simulate, &particle_collection_simulate::hook, reinterpret_cast<void**>(&particle_collection_simulate::original)) != MH_OK)
+	if (MH_CreateHook(particle_collection_simulate_target, &particle_collection_simulate::hook, reinterpret_cast<void**>(&particle_collection_simulate::original)) != MH_OK)
 		throw std::runtime_error(("failed to initialize particle_collection_simulate."));
-
+	
 	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
 		throw std::runtime_error(("failed to enable hooks."));
 
@@ -243,6 +243,10 @@ void __stdcall hooks::paint_traverse::hook(unsigned int panel, bool force_repain
 		if (csgo::local_player && csgo::local_player->is_alive()) {
 			int vel = csgo::local_player->velocity().length_2d();
 			render::text(w / 2, h / 2 + 400, render::fonts::indicator_font, std::format("Vel: {}", vel), true, color(255, 255, 255, 255));
+		}
+		//ghetto way to remove smoke overlay, TODO hook render smoke overlay
+		if (variables::visuals::world::smoke_clr[3] != 1.0f) { //not modulate alpha
+			*(int*)(*(DWORD*)(interfaces::line_go_thru_smoke + 0x8)) = 0;
 		}
 		break;
 

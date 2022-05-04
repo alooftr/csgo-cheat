@@ -83,7 +83,6 @@ namespace interfaces {
 	inline i_localize* localize= nullptr;
 	inline i_game_event_manager2* event_manager= nullptr;
 	inline i_inputsytem* inputsystem= nullptr;
-	inline IDirect3DDevice9* directx= nullptr;
 	inline trace* trace_ray= nullptr;
 	inline glow_manager_t* glow_manager= nullptr;
 	inline player_game_movement* game_movement= nullptr;
@@ -98,6 +97,6 @@ namespace interfaces {
 	inline std::uint8_t* is_depth_of_field_enabled = nullptr;
 	inline IDirect3DDevice9* device{};
 	inline void* sound = nullptr;
-
+	inline std::uint8_t* line_go_thru_smoke = nullptr;
 	bool initialize();
 }
