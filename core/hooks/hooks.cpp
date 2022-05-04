@@ -148,10 +148,11 @@ static HRESULT D3DAPI hooks::present::hook(IDirect3DDevice9* device, RECT* sourc
 	menu::render();
 	if (!menu::settings::open){
 		menu::settings::alpha = 0;
-		alpha = std::clamp(alpha - (animation_frequency * ImGui::GetIO().DeltaTime) * 2, 0.f, 1.f);
-		if (variables::bg_blur)
-			post_processing::perform_blur(ImGui::GetBackgroundDrawList(), alpha, w, h);
+		alpha = 0;
 	}
+
+	if (variables::settings::blur)
+		post_processing::perform_blur(ImGui::GetBackgroundDrawList(), alpha, w, h);
 
 	ImGui::EndFrame();
 	ImGui::Render();
@@ -252,7 +253,7 @@ void __stdcall hooks::paint_traverse::hook(unsigned int panel, bool force_repain
 		}
 
 		if (menu::settings::open)
-			alpha = std::clamp(alpha + animation_frequency * ImGui::GetIO().DeltaTime, 0.f, 1.f);
+			alpha = std::clamp(alpha + animation_frequency * ImGui::GetIO().DeltaTime, 0.f, variables::settings::blur_strength);
 
 		break;
 	}
@@ -421,13 +422,27 @@ void __fastcall hooks::particle_collection_simulate::hook(particle_collection* t
 					for (int i = 0; i < this_ptr->active_particle; i++) {
 						float* color = this_ptr->particle_attribute.float_attribute_pointer(PARTICLE_ATTRIBUTE_TINT_RGB, i);
 						color[0] = variables::visuals::world::molotov_fire_clr[0];
-						color[1] = variables::visuals::world::molotov_fire_clr[1];
-						color[2] = variables::visuals::world::molotov_fire_clr[2];
+						color[4] = variables::visuals::world::molotov_fire_clr[1];
+						color[8] = variables::visuals::world::molotov_fire_clr[2];
 					}
 				}
 				break;
 			}
 			break;
+		case fnv::hash("explosion_smokegrenade"):
+		case fnv::hash("explosion_smokegrenade_fallback"):
+			if (variables::visuals::world::smoke) {
+				for (int i = 0; i < this_ptr->active_particle; i++) {
+					float* color = this_ptr->particle_attribute.float_attribute_pointer(PARTICLE_ATTRIBUTE_TINT_RGB, i);
+					color[0] = variables::visuals::world::smoke_clr[0];
+					color[4] = variables::visuals::world::smoke_clr[1];
+					color[8] = variables::visuals::world::smoke_clr[2];
+
+					float* alpha = this_ptr->particle_attribute.float_attribute_pointer(PARTICLE_ATTRIBUTE_ALPHA, i);
+					*alpha = variables::visuals::world::smoke_clr[3];
+				}
+			}
+				break;
 		default:
 			//console::log("[particle_collection]", root_name);
 			break;

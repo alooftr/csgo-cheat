@@ -11,11 +11,12 @@ void config::initialize() {
 
 void save_misc(Json::Value save) {
 	//Theme saving
-	save[header][("menu_clr_r")][0] = variables::menu_clr[0];
-	save[header][("menu_clr_g")][1] = variables::menu_clr[1];
-	save[header][("menu_clr_b")][2] = variables::menu_clr[2];
+	save[header][("menu_clr_r")][0] = variables::settings::color[0];
+	save[header][("menu_clr_g")][1] = variables::settings::color[1];
+	save[header][("menu_clr_b")][2] = variables::settings::color[2];
 	save[header][("animation_frequency")] = menu::settings::animation_frequency;
-	save[header][("bg_blur")] = variables::bg_blur;
+	save[header][("blur")] = variables::settings::blur;
+	save[header][("blur_strength")] = variables::settings::blur_strength;
 	//movement
 	save[header][("bunny_hop")] = variables::movement::bunny_hop;
 	save[header][("edge_jump")] = variables::movement::edge_jump;
@@ -44,11 +45,12 @@ void save_misc(Json::Value save) {
 
 void load_misc(Json::Value load) {
 	//theme save
-	variables::menu_clr[0] = load[header][("menu_clr_r")][0].asFloat();
-	variables::menu_clr[1] = load[header][("menu_clr_g")][1].asFloat();
-	variables::menu_clr[2] = load[header][("menu_clr_b")][2].asFloat();
+	variables::settings::color[0] = load[header][("menu_clr_r")][0].asFloat();
+	variables::settings::color[1] = load[header][("menu_clr_g")][1].asFloat();
+	variables::settings::color[2] = load[header][("menu_clr_b")][2].asFloat();
 	menu::settings::animation_frequency = load[header][("animation_frequency")].asFloat();
-	variables::bg_blur = load[header][("bg_blur")].asBool();
+	variables::settings::blur = load[header][("blur")].asBool();
+	variables::settings::blur_strength = load[header][("blur_strength")].asFloat();
 	//movement
 	variables::movement::bunny_hop = load[header][("bunny_hop")].asBool();
 
@@ -81,21 +83,31 @@ void load_misc(Json::Value load) {
 void save_visuals(Json::Value save) {
 	//world
 	save[header][("molotov_fire")] = variables::visuals::world::molotov_fire;
+	save[header][("molotov_fire_r")][0] = variables::visuals::world::molotov_fire_clr[0];
+	save[header][("molotov_fire_g")][1] = variables::visuals::world::molotov_fire_clr[1];
+	save[header][("molotov_fire_b")][2] = variables::visuals::world::molotov_fire_clr[2];
+	save[header][("molotov_fire_a")][3] = variables::visuals::world::molotov_fire_clr[3];
 
-	save[header][("molotov_fire")][0] = variables::visuals::world::molotov_fire_clr[0];
-	save[header][("molotov_fire")][1] = variables::visuals::world::molotov_fire_clr[1];
-	save[header][("molotov_fire")][2] = variables::visuals::world::molotov_fire_clr[2];
-	save[header][("molotov_fire")][3] = variables::visuals::world::molotov_fire_clr[3];
+	save[header][("smoke")] = variables::visuals::world::smoke;
+	save[header][("smoke_clr_r")][0] = variables::visuals::world::smoke_clr[0];
+	save[header][("smoke_clr_g")][1] = variables::visuals::world::smoke_clr[1];
+	save[header][("smoke_clr_b")][2] = variables::visuals::world::smoke_clr[2];
+	save[header][("smoke_clr_a")][3] = variables::visuals::world::smoke_clr[3];
 }
 
 void load_visuals(Json::Value load) {
 	//world
 	variables::visuals::world::molotov_fire = load[header][("molotov_fire")].asBool();
+	variables::visuals::world::molotov_fire_clr[0] = load[header][("molotov_fire_r")][0].asFloat();
+	variables::visuals::world::molotov_fire_clr[1] = load[header][("molotov_fire_g")][1].asFloat();
+	variables::visuals::world::molotov_fire_clr[2] = load[header][("molotov_fire_b")][2].asFloat();
+	variables::visuals::world::molotov_fire_clr[3] = load[header][("molotov_fire_a")][3].asFloat();
 
-	variables::visuals::world::molotov_fire_clr[0] = load[header][("molotov_fire")][0].asFloat();
-	variables::visuals::world::molotov_fire_clr[1] = load[header][("molotov_fire")][1].asFloat();
-	variables::visuals::world::molotov_fire_clr[2] = load[header][("molotov_fire")][2].asFloat();
-	variables::visuals::world::molotov_fire_clr[3] = load[header][("molotov_fire")][3].asFloat();
+	variables::visuals::world::smoke = load[header][("smoke")].asBool();
+	variables::visuals::world::smoke_clr[0] = load[header][("smoke_clr_r")][0].asFloat();
+	variables::visuals::world::smoke_clr[1] = load[header][("smoke_clr_g")][1].asFloat();
+	variables::visuals::world::smoke_clr[2] = load[header][("smoke_clr_b")][2].asFloat();
+	variables::visuals::world::smoke_clr[3] = load[header][("smoke_clr_a")][3].asFloat();
 }
 
 void config::save(const std::string name) {

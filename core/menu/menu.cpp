@@ -120,21 +120,21 @@ void menu::render() {
     style.Colors[ImGuiCol_WindowBg] = ImColor(20.f / 255.f, 20.f / 255.f, 20.f / 255.f, style.Alpha);
     style.Colors[ImGuiCol_Border] = ImColor(96.f / 255.f, 96.f / 255.f, 96.f / 255.f, style.Alpha);
     style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(64.f / 255.f, 64.f / 255.f, 64.f / 255.f, style.Alpha);
-    style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
-    style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(variables::menu_clr[0] + (20.f / 255.f), variables::menu_clr[1] + (20.f / 255.f), variables::menu_clr[2] + (20.f / 255.f), style.Alpha);
-    style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
+    style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
+    style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(variables::settings::color[0] + (20.f / 255.f), variables::settings::color[1] + (20.f / 255.f), variables::settings::color[2] + (20.f / 255.f), style.Alpha);
+    style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
 
-    style.Colors[ImGuiCol_SliderGrab] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
-    style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
+    style.Colors[ImGuiCol_SliderGrab] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
+    style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
     style.Colors[ImGuiCol_FrameBgActive] = ImVec4(64.f / 255.f, 64.f / 255.f, 64.f / 255, style.Alpha);
 
-    style.Colors[ImGuiCol_Button] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
-    style.Colors[ImGuiCol_ButtonHovered] = ImVec4(variables::menu_clr[0] + (20.f / 255.f), variables::menu_clr[1] + (20.f / 255.f), variables::menu_clr[2] + (20.f / 255.f), style.Alpha);
-    style.Colors[ImGuiCol_ButtonActive] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
+    style.Colors[ImGuiCol_Button] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
+    style.Colors[ImGuiCol_ButtonHovered] = ImVec4(variables::settings::color[0] + (20.f / 255.f), variables::settings::color[1] + (20.f / 255.f), variables::settings::color[2] + (20.f / 255.f), style.Alpha);
+    style.Colors[ImGuiCol_ButtonActive] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
 
-    style.Colors[ImGuiCol_Header] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
-    style.Colors[ImGuiCol_HeaderHovered] = ImVec4(variables::menu_clr[0] + (20.f / 255.f), variables::menu_clr[1] + (20.f / 255.f), variables::menu_clr[2] + (20.f / 255.f), style.Alpha);
-    style.Colors[ImGuiCol_HeaderActive] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
+    style.Colors[ImGuiCol_Header] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
+    style.Colors[ImGuiCol_HeaderHovered] = ImVec4(variables::settings::color[0] + (20.f / 255.f), variables::settings::color[1] + (20.f / 255.f), variables::settings::color[2] + (20.f / 255.f), style.Alpha);
+    style.Colors[ImGuiCol_HeaderActive] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
 
     style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(96.f / 255.f, 96.f / 255.f, 96.f / 255, style.Alpha);
     style.Colors[ImGuiCol_FrameBg] = ImVec4(64.f / 255.f, 64.f / 255.f, 64.f / 255.f, style.Alpha);
@@ -142,9 +142,9 @@ void menu::render() {
 
     style.Colors[ImGuiCol_ChildBg] = ImVec4(32.f / 255.f, 32.f / 255.f, 32.f / 255.f, style.Alpha);
 
-    style.Colors[ImGuiCol_PlotHistogram] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
+    style.Colors[ImGuiCol_PlotHistogram] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
 
-    style.Colors[ImGuiCol_PlotHistogram] = ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha);
+    style.Colors[ImGuiCol_PlotHistogram] = ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha);
 
     style.Colors[ImGuiCol_Text] = ImVec4(1.f, 1.f, 1.f, 1.f);
 
@@ -202,10 +202,10 @@ void menu::render() {
         P2.y += CurrentWindowPos.y;
         pDrawList = pForegroundDrawList;
         pDrawList->AddRectFilledMultiColor(P1, P2, 
-            ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], 255.f),
-            ImColor(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], 255.f),
-            ImColor(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], 255.f),
-            ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], 255.f));
+            ImColor(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], 255.f),
+            ImColor(variables::settings::color[2], variables::settings::color[0], variables::settings::color[1], 255.f),
+            ImColor(variables::settings::color[2], variables::settings::color[0], variables::settings::color[1], 255.f),
+            ImColor(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], 255.f));
         //Main Tab
         ImGui::PushFont(menu::settings::menu_font_14);
         ImGui::SetCursorPos(ImVec2(8.000f, 20.000f));
@@ -342,6 +342,10 @@ void menu::tabs::visuals() {
     ImGui::SameLine();
     ImGui::ColorEdit4("##mlfire", variables::visuals::world::molotov_fire_clr, ColorEditFl); tool_tip("Alpha bar is for the molotov's smoke alpha");
     
+    ImGui::Checkbox("Smoke##smkcb", &variables::visuals::world::smoke);
+    ImGui::SameLine();
+    ImGui::ColorEdit4("##smk", variables::visuals::world::smoke_clr, ColorEditFl);
+
     ImGui::PopFont();
     ImGui::EndChild();
 
@@ -464,8 +468,9 @@ void menu::tabs::settings() {
     ImGui::SliderFloat(xor("Menu animation freqency"), &menu::settings::animation_frequency, 0.1f, 10.f, "%.2f");
     ImGui::Spacing();
 
-    ImGui::ColorEdit3(xor("Menu Color"), variables::menu_clr);
-    ImGui::Checkbox(xor("Background Blur"), &variables::bg_blur);
+    ImGui::ColorEdit3(xor("Menu Color"), variables::settings::color);
+    ImGui::Checkbox(xor("Background Blur"), &variables::settings::blur);
+    ImGui::SliderFloat(xor("Background Blur Strength"), &variables::settings::blur_strength, 0.1f, 1.f, "%.2f");
     ImGui::Spacing();
     ImGui::Spacing();
 

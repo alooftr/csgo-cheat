@@ -3,8 +3,13 @@
 
 namespace variables {
 	inline float copy_paste_color[4]{ 1.f , 1.f, 1.f, 1.f };
-	inline float menu_clr[3]{ 85.f / 255 , 125.f / 255, 200.f / 255 };
-	inline bool bg_blur = false;
+	namespace settings {
+		inline float color[3]{ 85.f / 255 , 125.f / 255, 200.f / 255 };
+		inline bool blur = false;
+		inline float blur_strength = 1.f;
+
+	}
+
 
 	namespace movement {
 		inline bool bunny_hop = false;
@@ -39,6 +44,9 @@ namespace variables {
 		namespace world{
 			inline bool molotov_fire = false;
 			inline float molotov_fire_clr[4] = { 255.f / 255.f,  255.f / 255.f,  255.f / 255.f,  0.f / 255.f };
+
+			inline bool smoke = false;
+			inline float smoke_clr[4] = { 255.f / 255.f,  255.f / 255.f,  255.f / 255.f,  255.f / 255.f };
 		}
 		namespace player {
 

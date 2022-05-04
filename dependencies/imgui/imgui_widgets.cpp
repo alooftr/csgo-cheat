@@ -713,19 +713,19 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     // Render
     const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
     //RenderNavHighlight(bb, id);
-    //RenderFrame(bb.Min, bb.Max, hovered ? GetColorU32(ImVec4(variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, variables::menu_clr[2] + 20.f / 255.f, alpha)) : GetColorU32(ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], alpha)), true, style.FrameRounding);
+    //RenderFrame(bb.Min, bb.Max, hovered ? GetColorU32(ImVec4(variables::settings::color[0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, variables::settings::color[2] + 20.f / 255.f, alpha)) : GetColorU32(ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], alpha)), true, style.FrameRounding);
     //window->DrawList->AddRectFilledMultiColor(bb.Min, bb.Max,
-    //    hovered ? GetColorU32(ImVec4(variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, variables::menu_clr[2] + 20.f / 255.f, alpha))
-    //    : GetColorU32(ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], alpha)),
+    //    hovered ? GetColorU32(ImVec4(variables::settings::color[0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, variables::settings::color[2] + 20.f / 255.f, alpha))
+    //    : GetColorU32(ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], alpha)),
     //    //up left
-    //    hovered ? GetColorU32(ImVec4(variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, variables::menu_clr[2] + 20.f / 255.f, alpha))
-    //    : GetColorU32(ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], alpha)),
+    //    hovered ? GetColorU32(ImVec4(variables::settings::color[0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, variables::settings::color[2] + 20.f / 255.f, alpha))
+    //    : GetColorU32(ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], alpha)),
     //    //up right
-    //    hovered ? GetColorU32(ImVec4(variables::menu_clr[2] + 20.f / 255.f, variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, alpha))
-    //    : GetColorU32(ImVec4(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], alpha)),
+    //    hovered ? GetColorU32(ImVec4(variables::settings::color[2] + 20.f / 255.f, variables::settings::color[0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, alpha))
+    //    : GetColorU32(ImVec4(variables::settings::color[2], variables::settings::color[0], variables::settings::color[1], alpha)),
     //    //bot right
-    //    hovered ? GetColorU32(ImVec4(variables::menu_clr[2] + 20.f / 255.f, variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, alpha))
-    //    : GetColorU32(ImVec4(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], alpha)));
+    //    hovered ? GetColorU32(ImVec4(variables::settings::color[2] + 20.f / 255.f, variables::settings::color[0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, alpha))
+    //    : GetColorU32(ImVec4(variables::settings::color[2], variables::settings::color[0], variables::settings::color[1], alpha)));
     //bot left
     RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
 
@@ -1145,7 +1145,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
 
     RenderNavHighlight(total_bb, id);
     RenderFrame(check_bb.Min, check_bb.Max, GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), true, style.FrameRounding);
-    ImU32 check_col = GetColorU32(ImVec4(variables::menu_clr[0] * 5, variables::menu_clr[1] * 5, variables::menu_clr[2] * 5, alpha));
+    ImU32 check_col = GetColorU32(ImVec4(variables::settings::color[0] * 5, variables::settings::color[1] * 5, variables::settings::color[2] * 5, alpha));
     bool mixed_value = (g.LastItemData.InFlags & ImGuiItemFlags_MixedValue) != 0;
     if (mixed_value)
     {
@@ -1156,21 +1156,21 @@ bool ImGui::Checkbox(const char* label, bool* v)
     }
     else if (*v)
     {
-        RenderFrame(check_bb.Min, check_bb.Max, hovered ? GetColorU32(ImVec4(variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, variables::menu_clr[2] + 20.f / 255.f, alpha)) : GetColorU32(ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], alpha)), true, style.FrameRounding);
+        RenderFrame(check_bb.Min, check_bb.Max, hovered ? GetColorU32(ImVec4(variables::settings::color[0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, variables::settings::color[2] + 20.f / 255.f, alpha)) : GetColorU32(ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], alpha)), true, style.FrameRounding);
         /* gradient box 
         window->DrawList->AddRectFilledMultiColor(check_bb.Min, check_bb.Max,
-            hovered ? GetColorU32(ImVec4(variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, variables::menu_clr[2] + 20.f / 255.f, alpha))
-            : GetColorU32(ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], alpha)),
+            hovered ? GetColorU32(ImVec4(variables::settings::color[0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, variables::settings::color[2] + 20.f / 255.f, alpha))
+            : GetColorU32(ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], alpha)),
             //up left
-            hovered ? GetColorU32(ImVec4(variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, variables::menu_clr[2] + 20.f / 255.f, alpha)) 
-            : GetColorU32(ImVec4(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], alpha)),
+            hovered ? GetColorU32(ImVec4(variables::settings::color[0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, variables::settings::color[2] + 20.f / 255.f, alpha)) 
+            : GetColorU32(ImVec4(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], alpha)),
             //up right
-            hovered ? GetColorU32(ImVec4(variables::menu_clr[2] + 20.f / 255.f, variables::menu_clr[0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, alpha)) 
-            : GetColorU32(ImVec4(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], alpha)),
+            hovered ? GetColorU32(ImVec4(variables::settings::color[2] + 20.f / 255.f, variables::settings::color[0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, alpha)) 
+            : GetColorU32(ImVec4(variables::settings::color[2], variables::settings::color[0], variables::settings::color[1], alpha)),
             //bot right
-            hovered ? GetColorU32(ImVec4(variables::menu_clr[2] + 20.f / 255.f, variables::
-            [0] + 20.f / 255.f, variables::menu_clr[1] + 20.f / 255.f, alpha)) 
-            : GetColorU32(ImVec4(variables::menu_clr[2], variables::menu_clr[0], variables::menu_clr[1], alpha)));
+            hovered ? GetColorU32(ImVec4(variables::settings::color[2] + 20.f / 255.f, variables::
+            [0] + 20.f / 255.f, variables::settings::color[1] + 20.f / 255.f, alpha)) 
+            : GetColorU32(ImVec4(variables::settings::color[2], variables::settings::color[0], variables::settings::color[1], alpha)));
             //bot left
         */
         const float pad = ImMax(1.0f, IM_FLOOR(square_sz / 6.0f));
@@ -6299,9 +6299,9 @@ bool ImGui::TabEx(const char* label, const bool selected, const ImVec2& size_arg
     
 
     if (selected)
-        window->DrawList->AddRectFilled({ bb.Min.x + 20,bb.Max.y - 7 }, { bb.Max.x - 20,bb.Max.y - 5 }, selected ? ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha) : ImColor(255, 255, 255, 255), 6);
+        window->DrawList->AddRectFilled({ bb.Min.x + 20,bb.Max.y - 7 }, { bb.Max.x - 20,bb.Max.y - 5 }, selected ? ImColor(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha) : ImColor(255, 255, 255, 255), 6);
      
-    window->DrawList->AddText(ImVec2(bb.Min.x + size_arg.x / 2 - ImGui::CalcTextSize(label).x / 2, bb.Min.y + size_arg.y / 2 - ImGui::CalcTextSize(label).y / 2), selected ? ImColor(variables::menu_clr[0], variables::menu_clr[1], variables::menu_clr[2], style.Alpha) : ImColor(255, 255, 255, 255), label);
+    window->DrawList->AddText(ImVec2(bb.Min.x + size_arg.x / 2 - ImGui::CalcTextSize(label).x / 2, bb.Min.y + size_arg.y / 2 - ImGui::CalcTextSize(label).y / 2), selected ? ImColor(variables::settings::color[0], variables::settings::color[1], variables::settings::color[2], style.Alpha) : ImColor(255, 255, 255, 255), label);
 
     return pressed;
 }
