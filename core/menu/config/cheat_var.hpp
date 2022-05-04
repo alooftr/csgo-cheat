@@ -4,6 +4,7 @@
 namespace variables {
 	inline float copy_paste_color[4]{ 1.f , 1.f, 1.f, 1.f };
 	inline float menu_clr[3]{ 85.f / 255 , 125.f / 255, 200.f / 255 };
+	inline bool bg_blur = false;
 
 	namespace movement {
 		inline bool bunny_hop = false;
@@ -28,6 +29,7 @@ namespace variables {
 		inline bool mini_jump = false;
 		inline int mini_jump_key = 0;
 	}
+
 	namespace misc {
 		inline bool auto_pistol = false;
 

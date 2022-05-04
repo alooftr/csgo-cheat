@@ -1,3 +1,5 @@
+//thenk https://www.unknowncheats.me/forum/3121299-post21.html
+
 template<class T> struct c_ult_reference {
 	c_ult_reference* next;
 	c_ult_reference* prev;
@@ -31,13 +33,13 @@ DEFPARTICLE_ATTRIBUTE(TINT_RGB, 6, ATTRDATATYPE_4V);
 DEFPARTICLE_ATTRIBUTE(ALPHA, 7, ATTRDATATYPE_FLOAT);
  
 struct particle_attribute_address_table {
-	float* m_pAttributes[MAX_PARTICLE_ATTRIBUTES];
-	size_t m_nFloatStrides[MAX_PARTICLE_ATTRIBUTES];
+	float* attributes[MAX_PARTICLE_ATTRIBUTES];
+	size_t float_strides[MAX_PARTICLE_ATTRIBUTES];
  
 	FORCEINLINE float* float_attribute_pointer(int nAttribute, int nParticleNumber) const {
 		int block_ofs = nParticleNumber / 4;
-		return m_pAttributes[nAttribute] +
-			m_nFloatStrides[nAttribute] * block_ofs +
+		return attributes[nAttribute] +
+			float_strides[nAttribute] * block_ofs +
 			(nParticleNumber & 3);
 	}
  

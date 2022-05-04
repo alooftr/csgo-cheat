@@ -142,18 +142,15 @@ static HRESULT D3DAPI hooks::present::hook(IDirect3DDevice9* device, RECT* sourc
 	post_processing::set_device(device);
 	post_processing::new_frame();
 
+	int w, h;
+	interfaces::engine->get_screen_size(w, h);
+
 	menu::render();
 	if (!menu::settings::open){
 		menu::settings::alpha = 0;
 		alpha = std::clamp(alpha - (animation_frequency * ImGui::GetIO().DeltaTime) * 2, 0.f, 1.f);
-		int w, h;
-		interfaces::engine->get_screen_size(w, h);
-		//post_processing::perform_blur(ImGui::GetBackgroundDrawList(), alpha, w, h);
-	}
-	else {
-		int w, h;
-		interfaces::engine->get_screen_size(w, h);
-		//post_processing::perform_blur(ImGui::GetBackgroundDrawList(), alpha, w, h);
+		if (variables::bg_blur)
+			post_processing::perform_blur(ImGui::GetBackgroundDrawList(), alpha, w, h);
 	}
 
 	ImGui::EndFrame();
@@ -253,10 +250,7 @@ void __stdcall hooks::paint_traverse::hook(unsigned int panel, bool force_repain
 			interfaces::panel->set_keyboard_input_enabled(panel, menu::settings::open);
 			interfaces::panel->set_mouse_input_enabled(panel, menu::settings::open);
 		}
-		else {
-			interfaces::panel->set_keyboard_input_enabled(panel, menu::settings::open);
-			interfaces::panel->set_mouse_input_enabled(panel, menu::settings::open);
-		}
+
 		if (menu::settings::open)
 			alpha = std::clamp(alpha + animation_frequency * ImGui::GetIO().DeltaTime, 0.f, 1.f);
 

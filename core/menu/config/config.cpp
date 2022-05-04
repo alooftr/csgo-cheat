@@ -15,6 +15,7 @@ void save_misc(Json::Value save) {
 	save[header][("menu_clr_g")][1] = variables::menu_clr[1];
 	save[header][("menu_clr_b")][2] = variables::menu_clr[2];
 	save[header][("animation_frequency")] = menu::settings::animation_frequency;
+	save[header][("bg_blur")] = variables::bg_blur;
 	//movement
 	save[header][("bunny_hop")] = variables::movement::bunny_hop;
 	save[header][("edge_jump")] = variables::movement::edge_jump;
@@ -47,6 +48,7 @@ void load_misc(Json::Value load) {
 	variables::menu_clr[1] = load[header][("menu_clr_g")][1].asFloat();
 	variables::menu_clr[2] = load[header][("menu_clr_b")][2].asFloat();
 	menu::settings::animation_frequency = load[header][("animation_frequency")].asFloat();
+	variables::bg_blur = load[header][("bg_blur")].asBool();
 	//movement
 	variables::movement::bunny_hop = load[header][("bunny_hop")].asBool();
 

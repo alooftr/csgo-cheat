@@ -465,6 +465,7 @@ void menu::tabs::settings() {
     ImGui::Spacing();
 
     ImGui::ColorEdit3(xor("Menu Color"), variables::menu_clr);
+    ImGui::Checkbox(xor("Background Blur"), &variables::bg_blur);
     ImGui::Spacing();
     ImGui::Spacing();
 
