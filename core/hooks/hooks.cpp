@@ -153,7 +153,6 @@ static HRESULT D3DAPI hooks::present::hook(IDirect3DDevice9* device, RECT* sourc
 			post_processing::perform_blur(ImGui::GetBackgroundDrawList(), alpha, w, h);
 	}
 
-
 	ImGui::EndFrame();
 	ImGui::Render();
 
