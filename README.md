@@ -10,7 +10,6 @@ updated version of: https://github.com/alphauc/sdk with some improvements, eg. u
 
 # media
 ![image](https://too.lewd.se/76ee83414ad1_csgo_9macPBqB06.png)
-
 https://streamable.com/663jzy
 
 #Author
